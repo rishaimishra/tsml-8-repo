@@ -129,7 +129,7 @@ class AuthController extends Controller
                     $data['otp'] = $otp;
                     $cc_email = "";
                     $email = $request->email;
-
+                    // dd($email);
                     (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email);
 
                     $msg = "OTP has been sent to this email address ".$request->email." successfully.";

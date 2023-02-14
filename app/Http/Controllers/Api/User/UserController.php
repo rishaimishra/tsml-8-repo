@@ -10,6 +10,7 @@ use App\Models\OtpVerification;
 use App\Mail\Register;
 use App\Models\User;
 use App\Jobs\UserCreated;
+use Illuminate\Support\Facades\Hash;
 use App\ServicesMy\MailService;
 use JWTAuth;
 use Validator;
