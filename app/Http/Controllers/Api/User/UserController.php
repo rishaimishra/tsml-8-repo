@@ -26,8 +26,7 @@ class UserController extends Controller
         $users = User::all();
 
         $userslist = [];
-        // --- chk -----------------
-
+         
         foreach ($users as $key => $value) {
 
         $userdata['name'] = $value->name;
