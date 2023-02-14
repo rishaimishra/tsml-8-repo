@@ -39,8 +39,8 @@ use App\Http\Controllers\Api\Modules\Sap\SapPaymentGuranteeProcedureController;
 use App\Http\Controllers\Api\Modules\Dorder\DoController;
 use App\Http\Controllers\Api\Modules\RfqOrderStatus\RfqOrderStatusController;
 use App\Http\Controllers\Api\Modules\Search\SearchController;
-use App\Http\Controllers\Api\User\Auth\ForgotPasswordController;
-use App\Http\Controllers\Api\User\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\Modules\Security\SecurityQuestionController;
 
 use App\Http\Controllers\Api\Admin\AdminAuthController;
