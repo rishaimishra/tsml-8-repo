@@ -11,6 +11,7 @@ use App\Mail\Register;
 use App\Models\User;
 use App\Jobs\UserCreated;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Models\RegistrationLog;
 use App\ServicesMy\MailService;
 use JWTAuth;
 use Validator;
