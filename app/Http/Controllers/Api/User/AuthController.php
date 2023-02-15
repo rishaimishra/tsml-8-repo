@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Hash;
 use Response;
 use Mail;
 use DB;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class AuthController extends Controller
 {
@@ -59,7 +60,13 @@ class AuthController extends Controller
    public function sendLoginOtp(Request $request)
    {
      // dd($request->all());
-     $validator = Validator::make($request->all(), [
+      $encrypted = json_encode($request->all());
+        // $json = json_encode($encrypted1);
+      $password = "123456";
+
+      $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+      // dd($decrypted['password']);
+     $validator = Validator::make($decrypted, [
             // 'email' => 'required|string|email|max:255',
             'password'=> 'required',
             'email' => ['required', 'string','max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/']
@@ -69,12 +76,13 @@ class AuthController extends Controller
             return response()->json($validator->errors());
         }
 
-        $input = $request->only('email', 'password');
+        // $input = $request->only('email', 'password');
+        $input = $decrypted;
         $jwt_token = null;
 
 
         // --------- registration logs ------------------------
-            $chklog = RegistrationLog::where('user_email',$request->email)->first();
+            $chklog = RegistrationLog::where('user_email',$decrypted['email'])->first();
             if(!empty($chklog))
             {
 
@@ -86,7 +94,7 @@ class AuthController extends Controller
                {
                   $temppass = rand(100000,999999);
                   $input['password'] = \Hash::make($temppass);
-                  $saveuser = User::where('email',$request->email)->update($input);
+                  $saveuser = User::where('email',$decrypted['email'])->update($input);
                   return response()->json([
                   'success' => false,'status' => 2,'message' => 'Password has been expired. Please reset your password.']);
                }
@@ -97,14 +105,14 @@ class AuthController extends Controller
 
         if (!$jwt_token = JWTAuth::attempt($input)) {
             // dd('new ok srv');
-            $chkuser = User::where('email',$request->email)->first();
+            $chkuser = User::where('email',$decrypted['email'])->first();
 
 
             if ($chkuser == null) {
               return response()->json([
                 'success' => false,'message' => 'Invalid Email']);
             }
-            $chkuserpass  = \Hash::check($request->password, $chkuser->password);
+            $chkuserpass  = \Hash::check($decrypted['password'], $chkuser->password);
             if ($chkuserpass == false) {
                 return response()->json([
                 'success' => false,'message' => 'Invalid Password']);
@@ -112,7 +120,7 @@ class AuthController extends Controller
               }
             }
             else{
-                   $chkuserd = User::where('email',$request->email)->first();
+                   $chkuserd = User::where('email',$decrypted['email'])->first();
                    // dd('oknew');
                    if ($chkuserd->login_attempt == 1) {
                      $userdata['login_attempt'] = $chkuserd->login_attempt;
@@ -123,7 +131,7 @@ class AuthController extends Controller
                    else{
                     $otp = random_int(100000, 999999);
                     $inputotp['login_otp'] = $otp;
-                    $categoryData = User::where('email',$request->email)->update($inputotp);
+                    $categoryData = User::where('email',$decrypted['email'])->update($inputotp);
                     $sub = "OTP For Login";
                     $html = 'mail.Otpverificationmail';
                     $data['otp'] = $otp;
@@ -132,10 +140,10 @@ class AuthController extends Controller
                     // dd($email);
                     (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email);
 
-                    $msg = "OTP has been sent to this email address ".$request->email." successfully.";
+                    $msg = "OTP has been sent to this email address ".$decrypted['email']." successfully.";
 
-                    $getuser = User::where('email',$request->email)->first();
-                    $userdata['email'] = $request->email;
+                    $getuser = User::where('email',$decrypted['email'])->first();
+                    $userdata['email'] = $decrypted['email'];
                     $userdata['otp_status'] = 1;
                     $userdata['login_attempt'] = 2;
                     // dd('ji');
