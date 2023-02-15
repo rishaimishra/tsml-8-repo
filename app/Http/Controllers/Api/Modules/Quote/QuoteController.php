@@ -20,6 +20,7 @@ use Auth;
 use DB;
 use \PDF;
 use Mail;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class QuoteController extends Controller
 {
@@ -2077,7 +2078,11 @@ class QuoteController extends Controller
 
                 $adrrArr['bill'] = $arrB;
                }
-               return response()->json(['status'=>1, 'message' =>'success','result' =>$adrrArr],
+
+               $password = "123456";
+
+               $encrypted = CryptoJsAes::encrypt($adrrArr, $password);
+               return response()->json(['status'=>1, 'message' =>'success','result' =>$encrypted],
                 config('global.success_status'));
 
 
