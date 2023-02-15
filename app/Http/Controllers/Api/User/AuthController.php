@@ -16,6 +16,7 @@ use App\Models\Models\RegistrationLog;
 use App\Mail\Register;
 use App\ServicesMy\MailService;
 use Illuminate\Support\Facades\Hash;
+use PHPMailer\PHPMailer\PHPMailer;
 use Response;
 use Mail;
 use DB;
@@ -650,6 +651,55 @@ class AuthController extends Controller
        
        
    }
+
+
+
+    public function sendResetLinkEmail(Request $request)
+    { 
+        $encrypted = json_encode($request->all());
+        // $json = json_encode($encrypted1);
+        $password = "123456";
+
+        $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+        // dd($decrypted['email']);
+
+        $validator = Validator::make($decrypted, [
+                'email' => ['required', 'string', 'email', 'max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/'],   
+            ]);
+
+        if ($validator->fails()) {
+                $response['error']['validation'] = $validator->errors();
+                return Response::json($response);
+            }
+
+        $data['email'] = $decrypted['email'];
+        $user = User::where('email',$decrypted['email'])->first();
+         
+        if(!@$user){
+            $response['error']['message'] = "No record found.";
+            return Response::json($response); 
+        }
+        
+        $vcode = random_int(100000, 999999); 
+        
+        User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode]);
+        // $data['OTP'] =  $vcode;
+        // $data['name'] = $user->name;
+        // $data['email'] = $user->email;
+
+        $mailSub = 'Forgot Password';
+        $mailTemplateBlade = 'mail.forgot_password'; 
+        $sentTo = $user->email;
+        $mailData['OTP'] = $vcode;
+        $mailData['name'] = $user->name; 
+         // dd($mailData);
+        (new MailService)->dotestMail($mailSub,$mailTemplateBlade,$sentTo,$mailData);
+         
+        
+        // Mail::send(new ForgotPasswordMail($data));
+        return response()->json(['status'=>1,'message' =>'A OTP send to your email address for reset your password .'],200);
+        
+    }
 
 
  
