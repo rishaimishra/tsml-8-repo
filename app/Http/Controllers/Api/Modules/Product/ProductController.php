@@ -16,7 +16,7 @@ use Response;
 use File; 
 use Storage; 
 use DB;
-
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class ProductController extends Controller
 {
@@ -135,8 +135,11 @@ class ProductController extends Controller
                 {
                     $prodetails['image_4_url'] =  null; 
                 }
+
+                $password = "123456";
+                $encrypted = CryptoJsAes::encrypt($prodetails, $password);
             
-            return response()->json(['status'=>1,'message' =>'success.','result' => $prodetails],200);
+            return response()->json(['status'=>1,'message' =>'success.','result' => $encrypted],200);
         }
         else
         {
@@ -614,7 +617,8 @@ class ProductController extends Controller
             $prodetails['sizes'] = $values;
 
 
-
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($prodetails, $password);
             
             return response()->json(['status'=>1,'message' =>'success.','result' => $prodetails],200);
 
