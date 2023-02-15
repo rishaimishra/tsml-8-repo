@@ -67,7 +67,7 @@ Route::post('/register', [UserController::class,'store']);
 Route::post('send-mobile-otp',[UserController::class,'sendOtpToMobile'])->name('send_mobile_otp');
 Route::post('verify-mobile-otp',[UserController::class,'verifyMobileOtp'])->name('verify_mobile_otp');
 Route::get('register_email', [UserController::class,'registerEmail']);
-Route::post('login', [AuthController::class,'login']);
+Route::post('userlogin', [AuthController::class,'userlogin']);
 Route::post('send-login-otp', [AuthController::class,'sendLoginOtp'])->name('send_login_otp');
 Route::post('chk_email', [UserController::class,'chkEmail']);
 Route::post('password-email', [ForgotPasswordController::class,'sendResetLinkEmail'])->name('user.password.email');
