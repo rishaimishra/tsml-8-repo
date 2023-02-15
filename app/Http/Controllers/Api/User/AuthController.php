@@ -159,7 +159,7 @@ class AuthController extends Controller
     *
     * @return \Illuminate\Http\JsonResponse
     */
-   public function userlogin(Request $request)
+   public function login(Request $request)
    {
        // $credentials = request(['email', 'password']);
 
