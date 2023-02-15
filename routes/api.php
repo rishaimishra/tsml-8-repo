@@ -71,7 +71,7 @@ Route::post('login', [AuthController::class,'login']);
 Route::post('send-login-otp', [AuthController::class,'sendLoginOtp'])->name('send_login_otp');
 Route::post('chk_email', [UserController::class,'chkEmail']);
 Route::post('password-email', [AuthController::class,'sendResetLinkEmail'])->name('user.password.email');
-Route::post('password-update', [ResetPasswordController::class,'reset'])->name('user.password.update');
+Route::post('password-update', [AuthController::class,'reset'])->name('user.password.update');
 Route::post('password-reset', [UserController::class,'passreset']);
 Route::get('get_user_by_id/{id}', [UserController::class,'getUserById']);
 Route::get('test', [UserController::class,'test']);
