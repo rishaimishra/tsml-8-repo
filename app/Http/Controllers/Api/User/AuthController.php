@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Hash;
 use Response;
 use Mail;
 use DB;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class AuthController extends Controller
 {
@@ -43,7 +44,7 @@ class AuthController extends Controller
       $user->save();
       $user = User::first();
       $token = JWTAuth::fromUser($user);
-
+ 
 
       return response()->json([
           'success' => true,
@@ -59,25 +60,33 @@ class AuthController extends Controller
    public function sendLoginOtp(Request $request)
    {
      // dd($request->all());
-     $validator = Validator::make($request->all(), [
+
+      $encrypted = json_encode($request->all());
+        // $json = json_encode($encrypted1);
+      $password = "123456";
+
+      $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+      // dd($decrypted['password']);
+      $validator = Validator::make($decrypted, [
             // 'email' => 'required|string|email|max:255',
             'password'=> 'required',
             'email' => ['required', 'string','max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/']
-
+            
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
-
-        $input = $request->only('email', 'password');
+ 
+        // $input = $request->only('email', 'password');
+        $input = $decrypted;
         $jwt_token = null;
 
 
         // --------- registration logs ------------------------
-            $chklog = RegistrationLog::where('user_email',$request->email)->first();
+            $chklog = RegistrationLog::where('user_email',$decrypted['email'])->first();
             if(!empty($chklog))
-            {
-
+            {  
+              
               $date1 = date_create($chklog->created);
               $date2 = date_create(date('Y-m-d'));
               $diff = date_diff($date1,$date2);
@@ -86,7 +95,7 @@ class AuthController extends Controller
                {
                   $temppass = rand(100000,999999);
                   $input['password'] = \Hash::make($temppass);
-                  $saveuser = User::where('email',$request->email)->update($input);
+                  $saveuser = User::where('email',$decrypted['email'])->update($input);
                   return response()->json([
                   'success' => false,'status' => 2,'message' => 'Password has been expired. Please reset your password.']);
                }
@@ -96,23 +105,23 @@ class AuthController extends Controller
             // -----------------------------------------------------
 
         if (!$jwt_token = JWTAuth::attempt($input)) {
-            // dd('new ok srv');
-            $chkuser = User::where('email',$request->email)->first();
-
-
+            // dd($input);
+            $chkuser = User::where('email',$decrypted['email'])->first();
+             
+           
             if ($chkuser == null) {
               return response()->json([
                 'success' => false,'message' => 'Invalid Email']);
             }
-            $chkuserpass  = \Hash::check($request->password, $chkuser->password);
+            $chkuserpass  = \Hash::check($decrypted['password'], $chkuser->password);
             if ($chkuserpass == false) {
-                return response()->json([
+                return response()->json([ 
                 'success' => false,'message' => 'Invalid Password']);
-
-              }
+               
+              } 
             }
-            else{
-                   $chkuserd = User::where('email',$request->email)->first();
+            else{ 
+                   $chkuserd = User::where('email',$decrypted['email'])->first();
                    // dd('oknew');
                    if ($chkuserd->login_attempt == 1) {
                      $userdata['login_attempt'] = $chkuserd->login_attempt;
@@ -121,36 +130,36 @@ class AuthController extends Controller
                     'success' => false,'message' => 'Please reset your password on first login.','result' =>$chkuserd->login_attempt]);
                    }
                    else{
-                    $otp = random_int(100000, 999999);
-                    $inputotp['login_otp'] = $otp;
-                    $categoryData = User::where('email',$request->email)->update($inputotp);
+                    $otp = random_int(100000, 999999); 
+                    $inputotp['login_otp'] = $otp; 
+                    $categoryData = User::where('email',$decrypted['email'])->update($inputotp); 
                     $sub = "OTP For Login";
                     $html = 'mail.Otpverificationmail';
                     $data['otp'] = $otp;
                     $cc_email = "";
-                    $email = $request->email;
-                    // dd($email);
-                    (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email);
+                    $email = $decrypted['email'];
+                    
+                    (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email); 
+           
+                    $msg = "OTP has been sent to this email address ".$decrypted['email']." successfully.";
 
-                    $msg = "OTP has been sent to this email address ".$request->email." successfully.";
-
-                    $getuser = User::where('email',$request->email)->first();
-                    $userdata['email'] = $request->email;
+                    $getuser = User::where('email',$decrypted['email'])->first(); 
+                    $userdata['email'] = $decrypted['email'];
                     $userdata['otp_status'] = 1;
                     $userdata['login_attempt'] = 2;
                     // dd('ji');
                     return response()->json([
                     'success' => true,'status'=>1,'message' => $msg,'result' =>$userdata]);
                    }
-
+                  
                   //return response()->json(['status'=>1,'message' =>$msg,'result' =>$userdata]);
-
-
+                    
+                 
 
             // -----------------------------------------------------
 
 
-              }
+              } 
 
    }
 
@@ -162,31 +171,41 @@ class AuthController extends Controller
    public function login(Request $request)
    {
        // $credentials = request(['email', 'password']);
-
+ 
        // if (! $token = auth()->attempt($credentials)) {
        //     return response()->json(['error' => 'Unauthorized'], 401);
        // }
-
+ 
        // return $this->respondWithToken($token);
 
        // dd($request->all());
-        $validator = Validator::make($request->all(), [
+     $encrypted = json_encode($request->all());
+        // $json = json_encode($encrypted1);
+      $password = "123456";
+
+      $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+      // dd($decrypted['password']);
+
+        $validator = Validator::make($decrypted, [
             'email' => ['required', 'string','max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/'],
             'password'=> 'required'
         ]);
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
-
-        $input = $request->only('email', 'password');
+ 
+        $input = [
+                   "email" => $decrypted['email'],
+                   "password" => $decrypted['password']
+                 ];
         $jwt_token = null;
-
+        
         // dd($jwt_token);
 
           // --------- registration logs ------------------------
-            $chklog = RegistrationLog::where('user_email',$request->email)->first();
+            $chklog = RegistrationLog::where('user_email',$decrypted['email'])->first();
             if(!empty($chklog))
-            {
+            {  
 
               $date1 = date_create($chklog->created);
               $date2 = date_create(date('Y-m-d'));
@@ -196,7 +215,7 @@ class AuthController extends Controller
                {
                   $temppass = rand(100000,999999);
                   $input['password'] = \Hash::make($temppass);
-                  $saveuser = User::where('email',$request->email)->update($input);
+                  $saveuser = User::where('email',$decrypted['email'])->update($input);
                   return response()->json([
                   'success' => false,'status' => 2,'message' => 'Password expired.']);
                }
@@ -204,14 +223,14 @@ class AuthController extends Controller
             }
 
             // -----------------------------------------------------
-
+   
         if (!$jwt_token = JWTAuth::attempt($input)) {
             // dd($jwt_token);
-            $chkuser = User::where('email',$request->email)->first();
-
+            $chkuser = User::where('email',$decrypted['email'])->first();
+             
             // dd($chkusermail);
             // \Hash::check($request->password, $user->password)
-
+           
             // dd($chkuserpass);
             if ($chkuser == null) {
               return response()->json([
@@ -220,7 +239,7 @@ class AuthController extends Controller
 
 
 
-            $chkuserpass  = \Hash::check($request->password, $chkuser->password);
+            $chkuserpass  = \Hash::check($decrypted['password'], $chkuser->password);
             if ($chkuserpass == false) {
 
               $userid = $chkuser->id;
@@ -230,12 +249,12 @@ class AuthController extends Controller
               $cval['login_count'] = $userlogin_count + 1;
               $chkusers = User::where('id',$userid)->update($cval);
               $countchk = User::where('id',$userid)->first();
-
-              if ($countchk->login_count==4) {
+               
+              if ($countchk->login_count==4) { 
                $datass['user_status'] = $chkuser->user_status;
                 $datass['user_email'] = $chkuser->email;
                 return response()->json([
-                'success' => false,'message' => 'Invalid password you have only one attempt left.','result' => $datass]);
+                'success' => false,'message' => 'Invalid password you have only one attempt left.','result' => $datass]); 
               }
               if ($countchk->login_count==5) {
                 $upuser['user_status'] = 2;
@@ -245,30 +264,30 @@ class AuthController extends Controller
                 $data['user_email'] = $userdata->email;
                 return response()->json([
                   'success' => false,'message' => 'Your account has been blocked.','result' => $data]);
-              }
+              } 
               if ($countchk->login_count>5) {
               $userdata = User::where('id',$userid)->first();
                 $data['user_status'] = $userdata->user_status;
-                $data['user_email'] = $userdata->email;
+                $data['user_email'] = $userdata->email; 
                 return response()->json([
                   'success' => false,'message' => 'Your account has been blocked.','result' => $data]);
-              }
+              } 
               else{
                 $data2['user_status'] = $chkuser->user_status;
                 $data2['user_email'] = $chkuser->email;
-                return response()->json([
+                return response()->json([ 
                 'success' => false,'message' => 'Invalid Password','result' => $data2]);
               }
-
-            }
+              
+            } 
         }
-
+        
         $authChk = Auth::user()->is_loggedin;
         // dd($id);
         if($authChk == 0 && Auth::user()->jwt_token == NULL)
         {
           // dd(Auth::user()->login_otp);
-            if (Auth::user()->login_otp == $request->logotp) {
+            if (Auth::user()->login_otp == $decrypted['logotp']) {
               // dd('ok to login');
               $userArr['user_id'] = Auth::user()->id;
               $userArr['user_name'] = Auth::user()->org_name;
@@ -291,9 +310,9 @@ class AuthController extends Controller
                 'message' => 'Invalid OTP please check',
             ]);
             }
-
+            
       }else{
-
+          
            return response()->json([
                 'success' => false,
                 'message' => 'You are already logged in, please logout from there',
@@ -301,7 +320,7 @@ class AuthController extends Controller
 
       }
    }
-
+ 
    /**
     * Get the authenticated User.
     *
@@ -326,28 +345,28 @@ class AuthController extends Controller
       $validator = Validator::make($request->all(), [
           'mobile_no'=>'required|digits:10',
       ]);
-
+      
       if ($validator->fails()) {
           return response()->json($validator->errors());
       }
 
-      $chkmob = OtpVerification::where('email',$request->email)->where('mob_number',$request->mobile_no)->first();
+      $chkmob = OtpVerification::where('email',$request->email)->where('mob_number',$request->mobile_no)->first(); 
 
         // dd($chkmob);
         if ($chkmob!=null) {
          if(!empty($chkmob->otp) && $chkmob->is_verified == 1)
           {
             // dd('OTP already send to this email addess.');
-              return response()->json(['status'=>0,'message' => 'OTP already sent to this email addess.'.$request->email]);
+              return response()->json(['status'=>0,'message' => 'OTP already sent to this email addess.'.$request->email]); 
           }
           else if(empty($chkmob->otp) && $chkmob->is_verified == 2)
           {
             // dd('This mobile number already verified.');
-              return response()->json(['status'=>0,'message' =>'This mobile number already verified.']);
+              return response()->json(['status'=>0,'message' =>'This mobile number already verified.']); 
           }
-        }
+        } 
         else
-        {
+        { 
           // dd('mail send');
               $user_email = User::where('email',$request->email)->first();
               $chkuser = User::where('phone',$request->mobile_no)->where('id','!=',$user_email->id)->get()->toArray();
@@ -357,16 +376,16 @@ class AuthController extends Controller
                 // dd('of');
                 return response()->json(['status'=>0,'message' => 'Mobile number already exists.']);
 
-
+              
             }else{
-
-                $otp = random_int(100000, 999999);
+               
+                $otp = random_int(100000, 999999); 
 
               $input['mob_number'] = $request->mobile_no;
               $input['email'] = $request->email;
               $input['otp'] = $otp;
 
-              $categoryData = OtpVerification::create($input);
+              $categoryData = OtpVerification::create($input);  
 
               $sub = "OTP for Mobile Verification";
               $html = 'mail.Otpverificationmail';
@@ -374,15 +393,15 @@ class AuthController extends Controller
               $cc_email = "";
               $email = $request->email;
 
-              (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email);
-
+              (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email); 
+     
               $msg = "OTP has been sent to this email address ".$request->email." successfully.";
               $userdata['mob_number'] = $request->mobile_no;
               $userdata['email'] = $request->email;
               return response()->json(['status'=>1,'message' =>$msg,'result' =>$userdata],200);
-
+                
             }
-
+            
         }
       }
 
@@ -393,15 +412,15 @@ class AuthController extends Controller
       */
       public function verifyMobileOtpUser(Request $request)
       {
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [ 
             'mobile_no' =>'required|digits:10',
             // 'email' =>'required|email',
-            'email' => ['required', 'string','max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/'],
-            'otp' =>'required|digits:6',
+            'email' => ['required', 'string','max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/'], 
+            'otp' =>'required|digits:6',              
         ],
-        [
+        [   
             'mobile_no.required'=>'Mobile is required',
-            'otp.required'=>'OTP is required',
+            'otp.required'=>'OTP is required',               
         ]
         );
 
@@ -411,28 +430,28 @@ class AuthController extends Controller
         }
         $chkmob = OtpVerification::where('email',$request->email)->where('mob_number',$request->mobile_no)->first();
         // dd($chkmob);
-        if (!empty($chkmob))
+        if (!empty($chkmob)) 
         {
             if($chkmob->otp == null && $chkmob->is_verified == 2)
             {
-                return response()->json(['status'=>0,'message' => array('Your mobile number already verified.')]);
+                return response()->json(['status'=>0,'message' => array('Your mobile number already verified.')]); 
             }
             else
             {
                 if(!empty($chkmob->otp) && $chkmob->is_verified != 2)
                 {
-                    if ($chkmob->otp == $request->otp)
+                    if ($chkmob->otp == $request->otp) 
                     {
                         $input['is_verified'] = 2;
                         $input['otp'] = '';
 
-                        $categoryData = OtpVerification::where('mob_number',$request->mobile_no)->where('otp',$chkmob->otp)->update($input);
+                        $categoryData = OtpVerification::where('mob_number',$request->mobile_no)->where('otp',$chkmob->otp)->update($input); 
 
                         User::where('email',$request->email)->update(['phone'=>$request->mobile_no]);
                         $response['success'] = true;
                         $response['message'] = 'Mobile Number Updated Successfully';
                         return $response;
-
+                 
                         // return response()->json(['status'=>1,'message' =>'Verification successfully.','result' => $chkmob],200);
                     }
                     else
@@ -463,8 +482,8 @@ class AuthController extends Controller
       // $response['success'] = true;
       // $response['message'] = 'Mobile Number Updated Successfully';
       // return $response;
-
-
+  
+ 
    /**
     * Log the user out (Invalidate the token).
     *
@@ -477,7 +496,7 @@ class AuthController extends Controller
        $updata['jwt_token'] = NULL;
        $upuser = User::where('id',Auth::user()->id)->update($updata);
        auth()->logout();
-
+       
        return response()->json(['message' => 'Successfully logged out']);
    }
 
@@ -492,14 +511,14 @@ class AuthController extends Controller
        $email = $request->input('email');
        // dd($email);
         $chkuser = User::where('email',$email)->first();
-
+   
         if(!empty($chkuser))
         {
           // dd('ok');
           $updata['is_loggedin'] = 0;
           $updata['jwt_token'] = NULL;
           $upuser = User::where('email',$chkuser->email)->update($updata);
-
+          
 
           return response()->json([
                 'success' => true,
@@ -513,11 +532,11 @@ class AuthController extends Controller
             ]);
 
         }
-
-
-
+       
+       
+       
    }
-
+ 
    /**
     * Refresh a token.
     *
@@ -527,7 +546,7 @@ class AuthController extends Controller
    {
        return $this->respondWithToken(auth()->refresh());
    }
-
+ 
    /**
     * Get the token array structure.
     *
@@ -546,7 +565,7 @@ class AuthController extends Controller
 
 
    public function updateLoggedin(Request $request)
-   {
+   { 
 
          $id = $request->input('id');
          $val = $request->input('value');
@@ -564,12 +583,12 @@ class AuthController extends Controller
 
         $id = $request->userid;
         $chkuser = User::where('id',$id)->first();
-
+   
         if(!empty($chkuser))
         {
           // dd('ok');
           $data['token'] = $chkuser->jwt_token;
-
+          
 
           return response()->json([
                 'success' => true,
@@ -584,9 +603,9 @@ class AuthController extends Controller
             ]);
 
         }
-
-
-
+       
+       
+       
    }
 
 
@@ -601,7 +620,7 @@ class AuthController extends Controller
        $email = $request->input('email');
        // dd($email);
         $chkuser = User::where('email',$email)->first();
-
+   
         if(!empty($chkuser))
         {
 
@@ -613,7 +632,7 @@ class AuthController extends Controller
 
           // dd($updata);
           $upuser = RegistrationLog::create($updata);
-
+          
 
           return response()->json([
                 'success' => true,
@@ -627,11 +646,11 @@ class AuthController extends Controller
             ]);
 
         }
-
-
-
+       
+       
+       
    }
 
 
-
+ 
 }

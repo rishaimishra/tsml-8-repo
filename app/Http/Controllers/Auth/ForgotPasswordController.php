@@ -49,7 +49,7 @@ class ForgotPasswordController extends Controller
      */
 
     public function sendResetLinkEmail(Request $request)
-    {
+    { 
         $encrypted = json_encode($request->all());
         // $json = json_encode($encrypted1);
         $password = "123456";
@@ -58,7 +58,7 @@ class ForgotPasswordController extends Controller
         // dd($decrypted['email']);
 
         $validator = Validator::make($decrypted, [
-                'email' => ['required', 'string', 'email', 'max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/'],
+                'email' => ['required', 'string', 'email', 'max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/'],   
             ]);
 
         if ($validator->fails()) {
@@ -68,30 +68,31 @@ class ForgotPasswordController extends Controller
 
         $data['email'] = $decrypted['email'];
         $user = User::where('email',$decrypted['email'])->first();
-
+         
         if(!@$user){
             $response['error']['message'] = "No record found.";
-            return Response::json($response);
+            return Response::json($response); 
         }
-
-        $vcode = random_int(100000, 999999);
-
+        
+        $vcode = random_int(100000, 999999); 
+        
         User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode]);
         // $data['OTP'] =  $vcode;
         // $data['name'] = $user->name;
         // $data['email'] = $user->email;
 
         $mailSub = 'Forgot Password';
-        $mailTemplateBlade = 'mail.forgot_password';
+        $mailTemplateBlade = 'mail.forgot_password'; 
         $sentTo = $user->email;
         $mailData['OTP'] = $vcode;
-        $mailData['name'] = $user->name;
+        $mailData['name'] = $user->name; 
          // dd($mailData);
         (new MailService)->dotestMail($mailSub,$mailTemplateBlade,$sentTo,$mailData);
-
-
+         
+        
         // Mail::send(new ForgotPasswordMail($data));
         return response()->json(['status'=>1,'message' =>'A OTP send to your email address for reset your password .'],200);
-
+        
     }
 }
+
