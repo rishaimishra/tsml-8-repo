@@ -185,7 +185,7 @@ class AuthController extends Controller
       $password = "123456";
 
       $decrypted = CryptoJsAes::decrypt($encrypted, $password);
-      // dd($decrypted['password']);
+      // dd($decrypted);
 
         $validator = Validator::make($decrypted, [
             'email' => ['required', 'string','max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/'],

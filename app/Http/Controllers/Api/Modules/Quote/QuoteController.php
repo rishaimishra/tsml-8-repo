@@ -221,13 +221,20 @@ class QuoteController extends Controller
 
        try{
 
+        $encrypted = json_encode($request->all());
+        // $json = json_encode($encrypted1);
+      $password = "123456";
+
+      $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+      // dd($decrypted);
+
         $quoteArr = array();
 
         $user_id = Auth::user()->id;
 
         // $rfq_number = (!empty($request->input('rfq_number'))) ? $request->input('rfq_number') : '';
         $quote_id = "";
-        foreach ($request->all() as $key => $value) {
+        foreach ($decrypted as $key => $value) {
 
           $array['product_id'] = $value['product_id'];
           $array['cat_id'] = $value['cat_id'];
@@ -284,8 +291,14 @@ class QuoteController extends Controller
          // echo "<pre>";print_r($request->all());exit();
        try{
 
+              $encrypted = json_encode($request->all());
+                // $json = json_encode($encrypted1);
+              $password = "123456";
 
-        foreach ($request->all() as $key => $value) {
+              $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+              // dd($decrypted);
+
+        foreach ($decrypted as $key => $value) {
 
           $quote_id = DB::table('quotes')->where('rfq_no',$value['rfq_number'])->where('product_id',$value['product_id'])->where('cat_id',$value['cat_id'])->whereNull('deleted_at')->select('id','user_id','kam_status')->first();
             // echo "<pre>";print_r($quote_id);exit();
@@ -650,9 +663,13 @@ class QuoteController extends Controller
 
         if(!empty($quoteArr))
         {
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($quoteArr, $password);
+
+
          return response()->json(['status'=>1,
           'message' =>config('global.sucess_msg'),
-          'result' => $quoteArr],
+          'result' => $encrypted],
           config('global.success_status'));
        }
        else{
@@ -734,7 +751,9 @@ class QuoteController extends Controller
           \DB::commit();
           if(!empty($result))
           {
-            return response()->json(['status'=>1,'message' =>'success','result' => $result],config('global.success_status'));
+             $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($result, $password);
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else{
 
@@ -1247,9 +1266,14 @@ class QuoteController extends Controller
 
         if(!empty($quoteArr))
         {
+
+          $password = "123456";
+
+          $encrypted = CryptoJsAes::encrypt($quoteArr, $password);
+
          return response()->json(['status'=>1,
           'message' =>config('global.sucess_msg'),
-          'result' => $quoteArr],
+          'result' => $encrypted],
           config('global.success_status'));
        }
        else{
@@ -1492,7 +1516,12 @@ class QuoteController extends Controller
           \DB::commit();
           if(!empty($result))
           {
-            return response()->json(['status'=>1,'message' =>'success','result' => $result],config('global.success_status'));
+
+            $password = "123456";
+
+            $encrypted = CryptoJsAes::encrypt($result, $password);
+
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else{
 
@@ -1669,7 +1698,11 @@ class QuoteController extends Controller
           \DB::commit();
           if(!empty($result))
           {
-            return response()->json(['status'=>1,'message' =>'success','result' => $result],config('global.success_status'));
+
+          $password = "123456";
+
+          $encrypted = CryptoJsAes::encrypt($result, $password);
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else{
 
