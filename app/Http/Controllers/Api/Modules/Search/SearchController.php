@@ -15,6 +15,7 @@ use App\Models\Models\Plant;
 use App\Models\Models\DeliveryMethod;
 use App\Mail\RfqGeneratedMail;
 use App\Http\Controllers\Api\Modules\Quote\QuoteController;
+use Nullix\CryptoJsAes\CryptoJsAes;
 use App\Models\User;
 use Validator;
 use Auth;
@@ -33,8 +34,17 @@ class SearchController extends Controller
 
         try{ 
 
-         $rfq_no = $request->input('rfq_no');
 
+          $encrypted = json_encode($request->all());
+            // $json = json_encode($encrypted1);
+          $password = "123456";
+
+          $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+          // dd($decrypted);
+
+         // $rfq_no = $request->input('rfq_no');
+
+          $rfq_no = $decrypted['rfq_no'];
          $quoteArr = array();    
 
          $quotes = DB::table('quotes')->leftjoin('users','quotes.user_id','users.id')
@@ -83,9 +93,12 @@ class SearchController extends Controller
 
         if(!empty($quoteArr))
         {
+
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($quoteArr, $password);
          return response()->json(['status'=>1,
           'message' =>config('global.sucess_msg'),
-          'result' => $quoteArr],
+          'result' => $encrypted],
           config('global.success_status'));
        }
        else{
@@ -116,8 +129,13 @@ class SearchController extends Controller
 		   \DB::beginTransaction();
 
 		 try{ 
+             $encrypted = json_encode($request->all());
+            // $json = json_encode($encrypted1);
+            $password = "123456";
 
-		         $search_txt = $request->input('search_txt');
+            $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+		         // $search_txt = $request->input('search_txt');
+            $search_txt = $decrypted['search_txt'];
 
 		         $po_no = Order::where('po_no',$search_txt)->first();
 
@@ -169,9 +187,12 @@ class SearchController extends Controller
 
 		        if(!empty($result))
 		        {
+
+              $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($result, $password);
 		         return response()->json(['status'=>1,
 		          'message' =>config('global.sucess_msg'),
-		          'result' => $result],
+		          'result' => $encrypted],
 		          config('global.success_status'));
 		       }
 		       else{

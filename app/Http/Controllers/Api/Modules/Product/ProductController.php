@@ -628,15 +628,15 @@ class ProductController extends Controller
 
    public function subcatFilter(Request $request)
     {
-
+       
         if(!empty($request->plant_id))
         {
 
              $plant = DB::table('plants')->where('id',$request->plant_id)->first();
         }
-
+      
             $variable = DB::table('products')->leftjoin('sub_categorys','products.id','sub_categorys.pro_id')->where('products.id',$request->product_id);
-
+         // dd($plant->type_2);
         if(!empty($plant->type_2))
         {
 
@@ -647,9 +647,9 @@ class ProductController extends Controller
             $variable = $variable->groupBy('sub_categorys.sub_cat_name');
         }
              $variable = $variable->orderBy('sub_categorys.id','asc')->select('sub_categorys.*','products.id as pid','products.pro_name')->get();
-
+        $data = array();
              foreach ($variable as $key => $value) {
-                 
+                  
                  $data[$key]['id'] = $value->id;
                  $data[$key]['pro_id'] = $value->pid;
                  $data[$key]['sub_cat_name'] = $value->sub_cat_name;

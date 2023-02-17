@@ -1737,9 +1737,12 @@ class QuoteController extends Controller
 
                 if(!empty($result))
                 {
+
+                  $password = "123456";
+                  $encrypted = CryptoJsAes::encrypt($result, $password);
                   return response()->json(['status'=>1,
                     'message' =>'success',
-                    'result' => $result],
+                    'result' => $encrypted],
                     config('global.success_status'));
                 }
         }

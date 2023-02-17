@@ -9,6 +9,7 @@ use App\Models\Models\ScTransaction;
 use App\Models\Models\Smremark;
 use DB;
 use Validator;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class RequoteController extends Controller
 {
@@ -245,17 +246,29 @@ class RequoteController extends Controller
       {
 
           try{ 
+
+                $encrypted = json_encode($request->all());
+                // $json = json_encode($encrypted1);
+                $password = "123456";
+
+                $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+                // dd($decrypted);
                    
-               $rfq_no = $request->input('rfq_no');
-               $sche_no = $request->input('sche_no');
+               // $rfq_no = $request->input('rfq_no');
+               // $sche_no = $request->input('sche_no');
+
+                $rfq_no = $decrypted['rfq_no'];
+                $sche_no = $decrypted['sche_no'];
                
                $res = ScTransaction::where('rfq_no',$rfq_no)->where('schedule',$sche_no)
                ->select('code','value')->get();
                    // echo "<pre>";print_r($newcount);exit();
-             
+              $password = "123456";
+              $encrypt = CryptoJsAes::encrypt($res, $password);
+
               return response()->json(['status'=>1,
                 'message' =>'success',
-                'result' => $res],
+                'result' => $encrypt],
                 config('global.success_status'));
 
 
