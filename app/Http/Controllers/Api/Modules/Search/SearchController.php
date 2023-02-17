@@ -35,16 +35,16 @@ class SearchController extends Controller
         try{ 
 
 
-          $encrypted = json_encode($request->all());
-            // $json = json_encode($encrypted1);
-          $password = "123456";
+          // $encrypted = json_encode($request->all());
+          //   // $json = json_encode($encrypted1);
+          // $password = "123456";
 
-          $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+          // $decrypted = CryptoJsAes::decrypt($encrypted, $password);
           // dd($decrypted);
 
-         // $rfq_no = $request->input('rfq_no');
+         $rfq_no = $request->input('rfq_no');
 
-          $rfq_no = $decrypted['rfq_no'];
+          // $rfq_no = $decrypted['rfq_no'];
          $quoteArr = array();    
 
          $quotes = DB::table('quotes')->leftjoin('users','quotes.user_id','users.id')
@@ -129,13 +129,13 @@ class SearchController extends Controller
 		   \DB::beginTransaction();
 
 		 try{ 
-             $encrypted = json_encode($request->all());
-            // $json = json_encode($encrypted1);
-            $password = "123456";
+           //   $encrypted = json_encode($request->all());
+           //  // $json = json_encode($encrypted1);
+           //  $password = "123456";
 
-            $decrypted = CryptoJsAes::decrypt($encrypted, $password);
-		         // $search_txt = $request->input('search_txt');
-            $search_txt = $decrypted['search_txt'];
+           //  $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+		         $search_txt = $request->input('search_txt');
+           //  $search_txt = $decrypted['search_txt'];
 
 		         $po_no = Order::where('po_no',$search_txt)->first();
 
