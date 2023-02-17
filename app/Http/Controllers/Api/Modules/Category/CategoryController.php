@@ -6,9 +6,9 @@
 	use App\Http\Controllers\Controller;
 	use Tymon\JWTAuth\Exceptions\JWTException;
 	use Illuminate\Support\Facades\Auth;
-	use App\User;
-	use App\Models\Category;
-	use App\Models\ProductSubCategory;
+	use App\Models\User;
+	use App\Models\Models\Category;
+	use App\Models\Models\ProductSubCategory;
 	use JWTAuth;
 	use Validator;
 	use File; 
@@ -51,7 +51,7 @@
 	        $input['product_id'] = $request->product_id;
 	        $input['cat_name'] = $request->cat_name;
 	        $input['cat_dese'] = $request->cat_dese;
-	        $input['slug'] = str_slug($request->cat_name);
+	        $input['slug'] =$request->cat_name;
 
 	        if ($request->hasFile('primary_image'))
 		    {  
@@ -256,7 +256,7 @@
 			        $updatecat['product_id'] = $request->product_id;
 			        $updatecat['cat_name'] = $request->cat_name;
 			        $updatecat['cat_dese'] = $request->cat_dese;
-			        $updatecat['slug'] = str_slug($request->cat_name);
+			        $updatecat['slug'] =  $request->cat_name;
 
 			         
 			         
