@@ -20,7 +20,7 @@ use File;
 use Storage;
 use Response;
 use DB; 
-
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class PriceManagementController extends Controller
 {
@@ -491,9 +491,16 @@ class PriceManagementController extends Controller
     public function getProPrice(Request $request)
     {
         try{
+             
+            $encrypted = json_encode($request->all());
+        // $json = json_encode($encrypted1);
+          $password = "123456";
 
-            $validator = Validator::make($request->all(), [
-              
+            $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+
+            // dd($decrypted);
+
+            $validator = Validator::make($decrypted, [ 
               'pro_id'        => 'required', 
               'cat_id'     => 'required',
               'sub_cat_id'        => 'required', 
@@ -505,7 +512,8 @@ class PriceManagementController extends Controller
             if ($validator->fails()) { 
                 return response()->json(['status'=>0,'message' =>config('global.failed_msg'),'result' => $validator->errors()],config('global.failed_status'));
             }
-            $priceData = PriceCalculation::where('pro_id',$request->pro_id)->where('cat_id',$request->cat_id)->where('sub_cat_id',$request->sub_cat_id)->where('size',$request->size)->first();
+            $priceData = PriceCalculation::where('pro_id',$decrypted['pro_id'])->where('cat_id',$decrypted['cat_id'])->where('sub_cat_id',$decrypted['sub_cat_id'])->where('size',$decrypted['size'])->first();
+            // dd($priceData);
             // if(isset($request->location))
             // {
             //   $userbilltoaddr = DB::table('address')->where('id',$request->location)
@@ -520,8 +528,8 @@ class PriceManagementController extends Controller
             //               ->first();
             // }
             // dd($userbilltoaddr,$usershiptoaddr);
-            if (!empty($request->destation_location) && !empty($request->location))  {
-                $getdeliverycost = Freights::where('pickup_from',$request->pickup_from)->where('location',$request->location)->where('destation_location',$request->destation_location)->first(); 
+            if (!empty($decrypted['destation_location']) && !empty($decrypted['location']))  {
+                $getdeliverycost = Freights::where('pickup_from',$decrypted['pickup_from'])->where('location',$decrypted['location'])->where('destation_location',$decrypted['destation_location'])->first(); 
             }
             
              // dd($getdeliverycost);
@@ -535,15 +543,17 @@ class PriceManagementController extends Controller
                    
                   $data['delivery_cost'] = (!empty($getdeliverycost->freight_charges)) ?  $getdeliverycost->freight_charges : 0;
                  }
-                 else if ($request->delivery_method=='Ex-Works'){
+                 else if ($decrypted['delivery_method']=='Ex-Works'){
                   $data['delivery_cost'] =  0;
                  } 
                
                 $data['interest_rate'] = $priceData->Interest_Rate;
                 $data['cam_discount'] = $priceData->CAM_Discount;
-                $data['gst_percentage'] = $priceData->gst_per; 
-            
-               return response()->json(['status'=>1,'message' =>'success.','result' => $data],200);
+                $data['gst_percentage'] = $priceData->gst_per;
+                // dd($data);
+                 $password = '123456';
+                 $encrypt = CryptoJsAes::encrypt($data, $password);
+               return response()->json(['status'=>1,'message' =>'success.','result' => $encrypt],200);
             }
             else{
 
