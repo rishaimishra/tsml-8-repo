@@ -21,6 +21,8 @@ use DB;
 use \PDF;
 use Mail;
 use Nullix\CryptoJsAes\CryptoJsAes;
+use File; 
+use Storage;
 
 class QuoteController extends Controller
 {
@@ -1592,18 +1594,50 @@ class QuoteController extends Controller
 
             $poArr = array();
 
-            $poArr['rfq_no'] = $request->input('rfq_no');
+            $poArr['rfq_no'] = $request->input('rfqNo');
             $poArr['po_no'] = $request->input('po_no');
             $poArr['amdnt_no'] = $request->input('amdnt_no');
 
 
             $files = $request->file('letterhead');
+             
+              // $file = base64_decode($request['image']);
+            $image = base64_encode($files);
+            // dd($image);
+           
+
+
+            // $safeName = str_random(10).'.'.'png';
+            $files = base64_decode($image);
+
+             
+            $image = $files; 
+
+            $filename = time().'-'.rand(1000,9999).'.'.$image->getClientOriginalExtension();
+
+                // $filename = rand(1000,9999).'-'.$image->getClientOriginalName();
+
+            Storage::putFileAs('public/images/letterheads/', $image, $filename);
+
+            $poArr['letterhead'] = $filename;
+           // $success = file_put_contents(public_path().'/uploads/'.$safeName, $file);
+           print $success;exit();
             if(!empty($files))
             {
 
-              $name = time().$files->getClientOriginalName();
-              $files->storeAs("public/images/letterheads",$name);
-              $poArr['letterhead'] = $name;
+              // $name = time().$files->getClientOriginalName();
+              // $files->storeAs("public/images/letterheads",$name);
+              // $poArr['letterhead'] = $name;
+
+                $image = $files; 
+
+                $filename = time().'-'.rand(1000,9999).'.'.$image->getClientOriginalExtension();
+
+                // $filename = rand(1000,9999).'-'.$image->getClientOriginalName();
+
+                Storage::putFileAs('public/images/letterheads/', $image, $filename);
+
+                $poArr['letterhead'] = $filename;
             }
 
             $date =  date_create($request->input('po_date'));
