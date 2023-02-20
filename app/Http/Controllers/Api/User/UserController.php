@@ -13,6 +13,7 @@ use App\Jobs\UserCreated;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Models\RegistrationLog;
 use App\ServicesMy\MailService;
+use App\Models\Address;
 use JWTAuth;
 use Validator;
 use Response;
@@ -350,6 +351,14 @@ class UserController extends Controller
          
         try {
 
+            $valid = array();
+
+            $valid['email'] = base64_decode($request->email);
+            $valid['password'] = base64_decode($request->password);
+            $valid['phone'] = base64_decode($request->phone);
+            $valid['company_pan'] = base64_decode($request->company_pan);
+            $valid['company_gst'] = base64_decode($request->company_gst);
+
             $validator = Validator::make($request->all(), [
                 // 'name'        => 'required', 
                 'email'        => 'required|unique:users,email',   
@@ -369,34 +378,34 @@ class UserController extends Controller
             // $userData = $request->all();
             $userData = [];
             $userData['name'] = "";
-            $userData['email'] = $request->email;
-            $userData['phone'] = $request->phone;
-            $userData['password'] = $request->password;
-            $userData['gstin'] = $request->gstin;
-            $userData['org_pan'] = $request->org_pan;
-            $userData['org_name'] = $request->org_name;
-            $userData['org_address'] = $request->org_address;
-            $userData['pref_product'] = $request->pref_product;
-            $userData['pref_product_size'] = $request->pref_product_size;
-            $userData['user_type'] = $request->user_type;
-            $userData['company_gst'] = $request->company_gst;
-            $userData['company_linked_address'] = $request->company_linked_address;
-            $userData['company_pan'] = $request->company_pan; 
-            $userData['company_name'] = $request->company_name;
-            $userData['business_nature'] = $request->business_nature; 
-            $userData['is_tcs_tds_applicable'] = $request->is_tcs_tds_applicable; 
+            $userData['email'] = base64_decode($request->email);
+            $userData['phone'] = base64_decode($request->phone);
+            $userData['password'] = base64_decode($request->password);
+            $userData['gstin'] = base64_decode($request->gstin);
+            $userData['org_pan'] = base64_decode($request->org_pan);
+            $userData['org_name'] = base64_decode($request->org_name);
+            $userData['org_address'] = base64_decode($request->org_address);
+            $userData['pref_product'] = base64_decode($request->pref_product);
+            $userData['pref_product_size'] = base64_decode($request->pref_product_size);
+            $userData['user_type'] = base64_decode($request->user_type);
+            $userData['company_gst'] = base64_decode($request->company_gst);
+            $userData['company_linked_address'] = base64_decode($request->company_linked_address);
+            $userData['company_pan'] = base64_decode($request->company_pan); 
+            $userData['company_name'] = base64_decode($request->company_name);
+            $userData['business_nature'] = base64_decode($request->business_nature); 
+            $userData['is_tcs_tds_applicable'] = base64_decode($request->is_tcs_tds_applicable); 
             $userData['first_name'] = ""; 
             $userData['last_name'] = ""; 
-            $userData['addressone'] = $request->addressone; 
-            $userData['addresstwo'] = $request->addresstwo; 
-            $userData['city'] = $request->city; 
-            $userData['state'] = $request->state; 
-            $userData['pincode'] = $request->pincode; 
-            $userData['address_type'] = $request->address_type;            
-            $userData['pan_dt'] = $request->pan_dt; 
-            $userData['gst_dt'] = $request->gst_dt; 
-            $userData['formD_dt'] = $request->formD_dt; 
-            $userData['tcs_dt'] = $request->tcs_dt;
+            $userData['addressone'] = base64_decode($request->addressone); 
+            $userData['addresstwo'] = base64_decode($request->addresstwo); 
+            $userData['city'] = base64_decode($request->city); 
+            $userData['state'] = base64_decode($request->state); 
+            $userData['pincode'] = base64_decode($request->pincode); 
+            $userData['address_type'] = base64_decode($request->address_type);            
+            $userData['pan_dt'] = base64_decode($request->pan_dt); 
+            $userData['gst_dt'] = base64_decode($request->gst_dt); 
+            $userData['formD_dt'] = base64_decode($request->formD_dt); 
+            $userData['tcs_dt'] = base64_decode($request->tcs_dt);
 
             if ($request->hasFile('address_proof_file'))
             {
@@ -486,7 +495,7 @@ class UserController extends Controller
             
             $user_id = $user->id;
             if (@$request->shipping_address) {
-                $address = json_decode(@$request->shipping_address,true);
+                $address = json_decode(@base64_decode($request->shipping_address),true);
 
 
                 foreach ($address as $key => $value) {
@@ -532,7 +541,7 @@ class UserController extends Controller
 
 
             if (@$request->billing_address) {
-                $billing_address = json_decode($request->billing_address, true);
+                $billing_address = json_decode(base64_decode($request->billing_address), true);
             
                     foreach ($billing_address as $key => $value) {
                     
