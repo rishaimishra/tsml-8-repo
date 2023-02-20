@@ -1600,44 +1600,12 @@ class QuoteController extends Controller
 
 
             $files = $request->file('letterhead');
-             
-              // $file = base64_decode($request['image']);
-            $image = base64_encode($files);
-            // dd($image);
-           
-
-
-            // $safeName = str_random(10).'.'.'png';
-            $files = base64_decode($image);
-
-             
-            $image = $files; 
-
-            $filename = time().'-'.rand(1000,9999).'.'.$image->getClientOriginalExtension();
-
-                // $filename = rand(1000,9999).'-'.$image->getClientOriginalName();
-
-            Storage::putFileAs('public/images/letterheads/', $image, $filename);
-
-            $poArr['letterhead'] = $filename;
-           // $success = file_put_contents(public_path().'/uploads/'.$safeName, $file);
-           print $success;exit();
             if(!empty($files))
             {
 
-              // $name = time().$files->getClientOriginalName();
-              // $files->storeAs("public/images/letterheads",$name);
-              // $poArr['letterhead'] = $name;
-
-                $image = $files; 
-
-                $filename = time().'-'.rand(1000,9999).'.'.$image->getClientOriginalExtension();
-
-                // $filename = rand(1000,9999).'-'.$image->getClientOriginalName();
-
-                Storage::putFileAs('public/images/letterheads/', $image, $filename);
-
-                $poArr['letterhead'] = $filename;
+              $name = time().$files->getClientOriginalName();
+              $files->storeAs("public/images/letterheads",$name);
+              $poArr['letterhead'] = $name;
             }
 
             $date =  date_create($request->input('po_date'));
