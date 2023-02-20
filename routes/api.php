@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\User\UserController;
+use App\Http\Controllers\Api\User\DashboardController;
 use App\Http\Controllers\Api\User\AuthController;
 use App\Http\Controllers\Api\Modules\Bulk\BulkController;
 use App\Http\Controllers\Api\Modules\PoDetails\PoDetailsController;
@@ -145,6 +146,8 @@ Route::get('so-excel-download/{contract_no?}',[SoTemporaryController::class,'SoE
 
 Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmiddleware']],function ()
 {
+         Route::post('user-dashboard', [DashboardController::class,'userDashboard'])->name('user_dashboard');
+
 	    Route::post('logout', [AuthController::class,'logout']);
 			Route::post('refresh', [AuthController::class,'refresh']);
 			Route::get('profile', [AuthController::class,'me']);
