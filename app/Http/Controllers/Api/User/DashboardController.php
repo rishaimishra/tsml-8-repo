@@ -61,7 +61,7 @@ class DashboardController extends Controller
 	            ->where('orders.status',1)
 	            ->whereNull('quotes.deleted_at')
 	            ->count();
-	        $data['orders_confirmed_&_pending_for_delivery'] = $orderCon; 
+	        $data['orders_confirmed_pending_for_delivery'] = $orderCon; 
 	       
 
 	        $custComplain = DB::table('complain_main') 
@@ -87,7 +87,7 @@ class DashboardController extends Controller
 	            ->where('users.zone',$getuser->zone)
 	            ->whereNull('quotes.deleted_at')
 	            ->count();
-	        $data['orders_confirmed_&_pending_for_delivery'] = $orderCon;
+	        $data['orders_confirmed_pending_for_delivery'] = $orderCon;
 
 	        $rfqNego = DB::table('quotes') 
 	            ->leftjoin('users','quotes.user_id','users.id')
