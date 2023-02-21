@@ -14,6 +14,7 @@ use JWTAuth;
 use Validator;
 use Hash;
 use Response; 
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class SecurityQuestionController extends Controller
 {
@@ -229,9 +230,14 @@ class SecurityQuestionController extends Controller
         //       return response()->json(['status'=>0,'message' =>config('global.failed_msg'),'result' => $validator->errors()],config('global.failed_status'));
         //   }
           // dd($request->all());
+        $encrypted = json_encode($request->all());
+        // $json = json_encode($encrypted1);
+      $password = "123456";
 
+      $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+      // dd($decrypted['password']);
         
-        foreach ($request->all() as $key => $value) {
+        foreach ($decrypted as $key => $value) {
 
              $id = User::where('email',$value['email'])->first();
             
