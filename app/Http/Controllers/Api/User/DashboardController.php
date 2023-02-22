@@ -89,6 +89,13 @@ class DashboardController extends Controller
             ->whereNull('quotes.deleted_at')
             ->count();
 	        $data['total_no_of_orders'] = $quote;
+
+	        $userzone = DB::table('users')  
+	            ->where('users.zone',$getuser->zone)
+	            ->where('users.user_type','C') 
+	            ->count();
+	             
+	        $data['total_no_cust_assinged'] = $userzone;
 	        // dd($getuser->zone);
 	        $orderCon = DB::table('orders')
 	            ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')             
