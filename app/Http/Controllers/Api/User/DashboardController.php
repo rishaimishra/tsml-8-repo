@@ -251,7 +251,7 @@ class DashboardController extends Controller
 	            }
 	            
 	            	         
-	        $data['ex_plant_con_orders_chrt_mon'] = $explantconordersum.' '. 'MT';
+	        $data['ex_plant_con_orders_chrt_mon'] = $explantconordersum;
 
 	        $getdepotrfqno = DB::table('quotes')
 	        	->select('quotes.id')
@@ -276,7 +276,7 @@ class DashboardController extends Controller
 	            }
 	            
 	            	         
-	        $data['ex_Depot_con_orders_chrt_mon'] = $exdepotconordersum.' '. 'MT';
+	        $data['ex_Depot_con_orders_chrt_mon'] = $exdepotconordersum;
 
 	        $getdaprfq = DB::table('quotes')
 	        	->select('quotes.id')
@@ -301,12 +301,13 @@ class DashboardController extends Controller
 	            }
 	            
 	            	         
-	        $data['DAP_con_orders_chrt_mon'] = $dapconordersum.' '. 'MT';
+	        $data['DAP_con_orders_chrt_mon'] = $dapconordersum;
 
 	        // End of Show data according to month .....
 
    		 }
 
+   		 $data['mtdata'] = 'MT';
    		
          
         // $password = "123456";

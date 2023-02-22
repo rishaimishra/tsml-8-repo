@@ -169,7 +169,7 @@ class QuoteController extends Controller
            // echo "<pre>";print_r($res);exit();
           // foreach ($res as $key => $value) {
 
-              $data['remarks'] = $resC->remarks;
+              $data['remarks'] = (!empty($resCa)) ? $resC->remarks : '';
               $data['camremarks'] = (!empty($resCa)) ? $resCa->camremarks : '';
               $data['salesremarks'] = (!empty($resS)) ? $resS->salesremarks: '';
               // $data['from'] = $res->from;
