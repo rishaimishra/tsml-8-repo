@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ExportDocs;
 use DB;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class TemporaryController extends Controller
 {
@@ -80,7 +81,10 @@ class TemporaryController extends Controller
     	 	// $this->scExceldown($ids,$file);
             $excel['ids'] = $ids;
             $excel['file'] = $file;
-    	 	return response()->json(['status'=>1, 'message' =>'success','result' => $excel],config('global.success_status'));
+
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($excel, $password);
+    	 	return response()->json(['status'=>1, 'message' =>'success','result' => $encrypted],config('global.success_status'));
     	 
     }
 

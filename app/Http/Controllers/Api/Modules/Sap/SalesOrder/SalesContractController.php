@@ -12,6 +12,7 @@ use App\Models\Models\SalesOrder;
 use App\Models\Models\ScPermissible;
 use App\Models\Models\ScmaterialDescription;
 use App\ServicesMy\MailService;
+use Nullix\CryptoJsAes\CryptoJsAes;
 use DB;
 
 class SalesContractController extends Controller
@@ -141,7 +142,8 @@ class SalesContractController extends Controller
       {
 
           try{ 
-                   
+                   $encrypted = array();
+
                    $res = DB::table('orders')->leftjoin('sc_transactions','orders.rfq_no','sc_transactions.rfq_no')
                    ->leftjoin('plants','sc_transactions.plant','plants.id')
                    ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
@@ -150,6 +152,9 @@ class SalesContractController extends Controller
                        ->select('sc_transactions.*','plants.code as pcode','users.name','orders.po_date','orders.cus_po_no','orders.po_date','users.user_code','users.addressone','users.addresstwo','users.city','users.state','users.pincode','users.id as uid')->where('orders.po_no',$po_no)->get();
                    // echo "<pre>";print_,'orders.po_date')->where('orders.po_no',$po_no)->get();
                    // echo "<pre>";print_r($newcount);exit();
+
+                  if(!empty($res))
+                  {
                    foreach ($res as $key => $value) {
                     
                      $data[$key]['id'] = $value->id;
@@ -179,6 +184,10 @@ class SalesContractController extends Controller
 
            
                    }
+
+                   $password = "123456";
+                   $encrypted = CryptoJsAes::encrypt($data, $password);
+                 }
              
               return response()->json(['status'=>1,
                 'message' =>'success',
@@ -480,12 +489,15 @@ class SalesContractController extends Controller
            
 
           }
+
+                   $password = "123456";
+                   $encrypted = CryptoJsAes::encrypt($result, $password);
         }
         
         
               return response()->json(['status'=>1,
                 'message' =>'success',
-                'result' => $result],
+                'result' => $encrypted],
                 config('global.success_status'));
 
 
@@ -603,6 +615,7 @@ class SalesContractController extends Controller
       {
 
           try{   
+                 $data = array();
                  $res = DB::table('sc_excel_datas')
                  // ->leftjoin('orders','sc_excel_datas.Cust_Referance','orders.cus_po_no')
                  // ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
@@ -612,6 +625,8 @@ class SalesContractController extends Controller
                  ->get();
               
                // echo "<pre>";print_r($res);exit();
+                if(!empty($res))
+                {
               foreach ($res as $key => $value) {
                   
                   $resa = DB::table('orders')
@@ -633,9 +648,13 @@ class SalesContractController extends Controller
                   $data[$key]['payment_proc'] = $value->payment_proc;
 
               }
+
+              $password = "123456";
+              $encrypted = CryptoJsAes::encrypt($data, $password);
+            }
               return response()->json(['status'=>1,
                 'message' =>'success',
-                'result' => $data],
+                'result' => $encrypted],
                 config('global.success_status'));
 
 
@@ -655,16 +674,21 @@ class SalesContractController extends Controller
 
           try{   
 
+              $encrypted = json_encode($request->all());
+                // $json = json_encode($encrypted1);
+              $password = "123456";
 
-            if(empty($request->ordr_no) && empty($request->finance_no) &&empty($request->payment_proc))
+              $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+
+            if(empty($decrypted['ordr_no']) && empty($decrypted['finance_no']) &&empty($decrypted['payment_proc']))
             {
-                 $chk = DB::table('sc_excel_datas')->where('sc_no',$request->sc_no)->get()->toArray();
+                 $chk = DB::table('sc_excel_datas')->where('sc_no',$decrypted['sc_no'])->get()->toArray();
               // echo "<pre>";print_r($chk);exit();
             
             if(empty($chk))
             {
                  $res = DB::table('sc_excel_datas')
-                 ->where('id',$request->id)->update(['sc_no' =>$request->sc_no,'ordr_no' => $request->ordr_no,'finance_no' => $request->finance_no,'payment_proc' => $request->payment_proc]);
+                 ->where('id',$request->id)->update(['sc_no' =>$decrypted['sc_no'],'ordr_no' => $decrypted['ordr_no'],'finance_no' => $decrypted['finance_no'],'payment_proc' => $decrypted['payment_proc']]);
 
               return response()->json(['status'=>1,
                 'message' =>'success',
@@ -681,7 +705,7 @@ class SalesContractController extends Controller
           }else{
 
                 $res = DB::table('sc_excel_datas')
-                 ->where('id',$request->id)->update(['sc_no' =>$request->sc_no,'ordr_no' => $request->ordr_no,'finance_no' => $request->finance_no,'payment_proc' => $request->payment_proc]);
+                 ->where('id',$decrypted['id'])->update(['sc_no' =>$decrypted['sc_no'],'ordr_no' => $decrypted['ordr_no'],'finance_no' => $decrypted['finance_no'],'payment_proc' => $decrypted['payment_proc']]);
 
               return response()->json(['status'=>1,
                 'message' =>'success',
