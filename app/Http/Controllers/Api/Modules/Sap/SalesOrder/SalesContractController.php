@@ -679,7 +679,7 @@ class SalesContractController extends Controller
               $password = "123456";
 
               $decrypted = CryptoJsAes::decrypt($encrypted, $password);
-
+              // dd($decrypted);
             if(empty($decrypted['ordr_no']) && empty($decrypted['finance_no']) &&empty($decrypted['payment_proc']))
             {
                  $chk = DB::table('sc_excel_datas')->where('sc_no',$decrypted['sc_no'])->get()->toArray();
@@ -688,7 +688,7 @@ class SalesContractController extends Controller
             if(empty($chk))
             {
                  $res = DB::table('sc_excel_datas')
-                 ->where('id',$request->id)->update(['sc_no' =>$decrypted['sc_no'],'ordr_no' => $decrypted['ordr_no'],'finance_no' => $decrypted['finance_no'],'payment_proc' => $decrypted['payment_proc']]);
+                 ->where('id',$decrypted['id'])->update(['sc_no' =>$decrypted['sc_no'],'ordr_no' => $decrypted['ordr_no'],'finance_no' => $decrypted['finance_no'],'payment_proc' => $decrypted['payment_proc']]);
 
               return response()->json(['status'=>1,
                 'message' =>'success',
