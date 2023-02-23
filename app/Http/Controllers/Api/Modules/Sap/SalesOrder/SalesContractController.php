@@ -22,33 +22,33 @@ class SalesContractController extends Controller
                  // echo "<pre>";print_r($request->all());exit();
           // foreach ($request->all() as $key => $value) {
             
-		    	 $po_details = $request->input('po_details');
+           $po_details = $request->input('po_details');
 
            $contract['po_no'] = $po_details['po_no'];
-		    	 $contract['contract_ty'] = $po_details['contract_ty'];
-		    	 $contract['sales_grp'] = $po_details['sales_grp'];
-		    	 $contract['qty_cont'] = $po_details['qty_cont'];
-		    	 $contract['net_val'] = $po_details['net_val'];
-		    	 $contract['sold_to_party'] = $po_details['sold_to_party'];
-		    	 $contract['ship_to_party'] = $po_details['ship_to_party'];
+           $contract['contract_ty'] = $po_details['contract_ty'];
+           $contract['sales_grp'] = $po_details['sales_grp'];
+           $contract['qty_cont'] = $po_details['qty_cont'];
+           $contract['net_val'] = $po_details['net_val'];
+           $contract['sold_to_party'] = $po_details['sold_to_party'];
+           $contract['ship_to_party'] = $po_details['ship_to_party'];
            $contract['sold_to_addr'] = $po_details['sold_to_addr'];
            $contract['ship_to_addr'] = $po_details['ship_to_addr'];
-		    	 $contract['cus_ref'] = $po_details['cus_ref'];
-		    	 $contract['cus_ref_dt'] = $po_details['cus_ref_dt'];
-		    	 $contract['shp_cond'] = $po_details['shp_cond'];
-		    	 $contract['sales_org'] = $po_details['sales_org'];
-		    	 $contract['dis_chnl'] = $po_details['dis_chnl'];
-		    	 $contract['div'] = $po_details['div'];
-		    	 $contract['sales_ofc'] = $po_details['sales_ofc'];
-		    	 $contract['cost_ref'] = $po_details['cost_ref'];
+           $contract['cus_ref'] = $po_details['cus_ref'];
+           $contract['cus_ref_dt'] = $po_details['cus_ref_dt'];
+           $contract['shp_cond'] = $po_details['shp_cond'];
+           $contract['sales_org'] = $po_details['sales_org'];
+           $contract['dis_chnl'] = $po_details['dis_chnl'];
+           $contract['div'] = $po_details['div'];
+           $contract['sales_ofc'] = $po_details['sales_ofc'];
+           $contract['cost_ref'] = $po_details['cost_ref'];
           
           // echo "<pre>";print_r();exit();
-		    	 $id = SalesContarct::create($contract);
+           $id = SalesContarct::create($contract);
 
-		    	 $contarctId = $id['id'];
+           $contarctId = $id['id'];
 
             $inco_form = $request->input('inco_form');
-		    	 
+           
               $arr['contarct_id'] = $contarctId;
               $arr['incoterms'] = $inco_form['incoterms'];
               $arr['pay_terms'] = $inco_form['pay_terms'];
@@ -60,28 +60,28 @@ class SalesContractController extends Controller
               $con_mat_id = SalesContractMaterial::create($arr);
 
 
-		    	 $materials = $request->input('material');
+           $materials = $request->input('material');
 
 
-		    	 foreach ($materials as $key => $value) {
+           foreach ($materials as $key => $value) {
 
               $mat_desc['con_mat_id'] = $con_mat_id['id'];
               $mat_desc['mat_code'] = $value['mat_code'];
               $mat_desc['pcode'] = $value['pcode'];
               $mat_desc['rfq_no'] = $value['rfq_no'];
               $mat_desc['total'] = $value['total'];
-		    	 	 
-		    	 	  $sid = ScmaterialDescription::create($mat_desc);
+             
+              $sid = ScmaterialDescription::create($mat_desc);
                       
               foreach ($value['specs'] as $ke => $valu) {
 
-                      	$specs['mat_id'] = $sid['id'];
-	                      $specs['comp'] = $valu['comp'];
-	                      $specs['max'] = $valu['max'];
-	                      $specs['min'] = $valu['min'];
-	                      
+                        $specs['mat_id'] = $sid['id'];
+                        $specs['comp'] = $valu['comp'];
+                        $specs['max'] = $valu['max'];
+                        $specs['min'] = $valu['min'];
+                        
 
-	                      SalesContarctSpecs::create($specs);
+                        SalesContarctSpecs::create($specs);
                       }
                       
 
@@ -101,238 +101,238 @@ class SalesContractController extends Controller
                       
 
                       foreach ($value['price_det'] as $k => $v) {
-                      	   
+                           
                         
-	                      $priceDet['mat_id'] = $sid['id'];
-	                      $priceDet['mat_code'] = $value['mat_code'];
-	                      $priceDet['cnty'] = $v['cnty'];
-	                      $priceDet['des'] = $v['des'];
-	                      $priceDet['amt'] = $v['amt'];
+                        $priceDet['mat_id'] = $sid['id'];
+                        $priceDet['mat_code'] = $value['mat_code'];
+                        $priceDet['cnty'] = $v['cnty'];
+                        $priceDet['des'] = $v['des'];
+                        $priceDet['amt'] = $v['amt'];
 
 
-	                      ScPriceDetail::create($priceDet);
-	                     
+                        ScPriceDetail::create($priceDet);
+                       
                       }
 
                       
                        // echo "<pre>";print_r($priceDet);exit();
 
-		    	 }
+           }
           // }
                   
-		    	  return response()->json(['status'=>1,
-					          'message' =>'success',
-					          'result' => $contarctId],
-					          config('global.success_status'));
+            return response()->json(['status'=>1,
+                    'message' =>'success',
+                    'result' => $contarctId],
+                    config('global.success_status'));
 
 
-	      }catch(\Exception $e){
+        }catch(\Exception $e){
 
-			       return response()->json(['status'=>0,
-			       	'message' =>'error',
-			       	'result' => $e->getMessage()],config('global.failed_status'));
-	     }
+             return response()->json(['status'=>0,
+              'message' =>'error',
+              'result' => $e->getMessage()],config('global.failed_status'));
+       }
     }
 
 
      // ----------------------------- get all price braeks --------------------------------------------
 
-	   public function priceBreakFetch($po_no)
-	    {
+     public function priceBreakFetch($po_no)
+      {
 
-	    	  try{ 
+          try{ 
                    
-                 	 $res = DB::table('orders')->leftjoin('sc_transactions','orders.rfq_no','sc_transactions.rfq_no')
-                 	 ->leftjoin('plants','sc_transactions.plant','plants.id')
-                 	 ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
-                 	 ->leftjoin('users','quotes.user_id','users.id')
-                 	 ->groupBy('sc_transactions.mat_code')
-                 	     ->select('sc_transactions.*','plants.code as pcode','users.name','orders.po_date','orders.cus_po_no','orders.po_date','users.user_code','users.addressone','users.addresstwo','users.city','users.state','users.pincode','users.id as uid')->where('orders.po_no',$po_no)->get();
-                 	 // echo "<pre>";print_,'orders.po_date')->where('orders.po_no',$po_no)->get();
-                 	 // echo "<pre>";print_r($newcount);exit();
-                 	 foreach ($res as $key => $value) {
-                 	 	
-                 	 	 $data[$key]['id'] = $value->id;
+                   $res = DB::table('orders')->leftjoin('sc_transactions','orders.rfq_no','sc_transactions.rfq_no')
+                   ->leftjoin('plants','sc_transactions.plant','plants.id')
+                   ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
+                   ->leftjoin('users','quotes.user_id','users.id')
+                   ->groupBy('sc_transactions.mat_code')
+                       ->select('sc_transactions.*','plants.code as pcode','users.name','orders.po_date','orders.cus_po_no','orders.po_date','users.user_code','users.addressone','users.addresstwo','users.city','users.state','users.pincode','users.id as uid')->where('orders.po_no',$po_no)->get();
+                   // echo "<pre>";print_,'orders.po_date')->where('orders.po_no',$po_no)->get();
+                   // echo "<pre>";print_r($newcount);exit();
+                   foreach ($res as $key => $value) {
+                    
+                     $data[$key]['id'] = $value->id;
                      $data[$key]['user_id'] = $value->uid;
-                 	 	 $data[$key]['code'] = $value->code;
-                 	 	 $data[$key]['cus_name'] = $value->name;
-                 	 	 $data[$key]['po_date'] = $value->po_date;
-                 	 	 $data[$key]['value'] = $value->value;
-                 	 	 $data[$key]['mat_code'] = $value->mat_code;
-                 	 	 $data[$key]['pcode'] = $value->pcode;
-                 	 	 $data[$key]['rfq_no'] = $value->rfq_no;
-                 	 	 $data[$key]['cus_po_no'] = $value->cus_po_no;
-                 	 	 $data[$key]['po_date'] = $value->po_date;
-                 	 	 $data[$key]['user_code'] = $value->user_code;
-                 	 	 $data[$key]['addressone'] = $value->addressone;
-                 	 	 $data[$key]['addresstwo'] = $value->addresstwo;
+                     $data[$key]['code'] = $value->code;
+                     $data[$key]['cus_name'] = $value->name;
+                     $data[$key]['po_date'] = $value->po_date;
+                     $data[$key]['value'] = $value->value;
+                     $data[$key]['mat_code'] = $value->mat_code;
+                     $data[$key]['pcode'] = $value->pcode;
+                     $data[$key]['rfq_no'] = $value->rfq_no;
+                     $data[$key]['cus_po_no'] = $value->cus_po_no;
+                     $data[$key]['po_date'] = $value->po_date;
+                     $data[$key]['user_code'] = $value->user_code;
+                     $data[$key]['addressone'] = $value->addressone;
+                     $data[$key]['addresstwo'] = $value->addresstwo;
                      $data[$key]['odr_qty'] = $this->orderQty($value->mat_code,$po_no);//qty per size
-                 	 	 $data[$key]['city'] = $value->city;
-                 	 	 $data[$key]['state'] = $value->state;
-                 	 	 $data[$key]['pincode'] = $value->pincode;
-                 	 	 $data[$key]['net_value'] = $this->scNetValue($po_no);
-                 	 	 $data[$key]['qty_ct'] = $this->qty_ct($po_no);
+                     $data[$key]['city'] = $value->city;
+                     $data[$key]['state'] = $value->state;
+                     $data[$key]['pincode'] = $value->pincode;
+                     $data[$key]['net_value'] = $this->scNetValue($po_no);
+                     $data[$key]['qty_ct'] = $this->qty_ct($po_no);
                      $data[$key]['tot_qty'] = $this->rfqTotQty($value->rfq_no);//total rfq qty
-                 	 	 $data[$key]['price_det'] = $this->priceBreakById($value->mat_code,$value->rfq_no);
-                 	 	 $data[$key]['specs'] = $this->subcatspecs($value->mat_code);
-                 	 	 $data[$key]['total'] = $this->totalRfqPrice($value->schedule);
+                     $data[$key]['price_det'] = $this->priceBreakById($value->mat_code,$value->rfq_no);
+                     $data[$key]['specs'] = $this->subcatspecs($value->mat_code);
+                     $data[$key]['total'] = $this->totalRfqPrice($value->schedule);
 
            
-                 	 }
-			    	 
-			        return response()->json(['status'=>1,
-			          'message' =>'success',
-			          'result' => $data],
-			          config('global.success_status'));
+                   }
+             
+              return response()->json(['status'=>1,
+                'message' =>'success',
+                'result' => $data],
+                config('global.success_status'));
 
 
-	      }catch(\Exception $e){
+        }catch(\Exception $e){
 
-	       return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
-	     }
+         return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
+       }
 
-	    	 
-	    }
+         
+      }
 
-	 // ---------------------------------------------------------------------------
+   // ---------------------------------------------------------------------------
 
-	// ----------------------------- get all price braeks by mat no. --------------
+  // ----------------------------- get all price braeks by mat no. --------------
 
-	   public function priceBreakById($mat_no,$rfq_no)
-	    {
+     public function priceBreakById($mat_no,$rfq_no)
+      {
 
-	    	  
+          
                    
-                 	 $res = DB::table('sc_transactions')->leftjoin('price_masters','sc_transactions.code','price_masters.code')
-                 	     ->select('sc_transactions.*','price_masters.component')->where('sc_transactions.mat_code',$mat_no)->where('sc_transactions.rfq_no',$rfq_no)->get();
+                   $res = DB::table('sc_transactions')->leftjoin('price_masters','sc_transactions.code','price_masters.code')
+                       ->select('sc_transactions.*','price_masters.component')->where('sc_transactions.mat_code',$mat_no)->where('sc_transactions.rfq_no',$rfq_no)->get();
                     // echo "<pre>";print_r($res);exit();
-                 	  foreach ($res as $key => $value) {
-                 	  	
-                 	  	  $arr[$key]['cnty'] = $value->code;
-                 	  	  $arr[$key]['des'] = $value->component;
-                 	  	  $arr[$key]['amt'] = $value->value;
-                 	  }
+                    foreach ($res as $key => $value) {
+                      
+                        $arr[$key]['cnty'] = $value->code;
+                        $arr[$key]['des'] = $value->component;
+                        $arr[$key]['amt'] = $value->value;
+                    }
 
 
-			        return $arr;
+              return $arr;
 
 
 
-	    	 
-	    }
+         
+      }
 
-	 // ---------------------------------------------------------------------------
+   // ---------------------------------------------------------------------------
 
-	   public function subcatspecs($mat_no)
-	    {
+     public function subcatspecs($mat_no)
+      {
 
-	    	  
+          
                    
-                 	 $res = DB::table('sc_transactions')->leftjoin('product_size_mat_no','sc_transactions.mat_code','product_size_mat_no.mat_no')
-                 	 ->leftjoin('sub_categorys','product_size_mat_no.sub_cat_id','sub_categorys.id')
-                 	     ->select('sc_transactions.mat_code','sub_categorys.*')->where('sc_transactions.mat_code',$mat_no)->get();
+                   $res = DB::table('sc_transactions')->leftjoin('product_size_mat_no','sc_transactions.mat_code','product_size_mat_no.mat_no')
+                   ->leftjoin('sub_categorys','product_size_mat_no.sub_cat_id','sub_categorys.id')
+                       ->select('sc_transactions.mat_code','sub_categorys.*')->where('sc_transactions.mat_code',$mat_no)->get();
 
-                 	  foreach ($res as $key => $value) {
-                 	  	  
-                 	  	  $cr = explode("-",str_replace("%","",$value->Cr));
-                 	  	  $c = explode("-",str_replace("%","",$value->C));
-                 	  	  $Phos = explode("-",str_replace("%","",$value->Phos));
-                 	  	  $s = explode("-",str_replace("%","",$value->S));
-                 	  	  $si = explode("-",str_replace("%","",$value->Si));
-                 	  	  $ti = explode("-",str_replace("%","",$value->Ti));
+                    foreach ($res as $key => $value) {
+                        
+                        $cr = explode("-",str_replace("%","",$value->Cr));
+                        $c = explode("-",str_replace("%","",$value->C));
+                        $Phos = explode("-",str_replace("%","",$value->Phos));
+                        $s = explode("-",str_replace("%","",$value->S));
+                        $si = explode("-",str_replace("%","",$value->Si));
+                        $ti = explode("-",str_replace("%","",$value->Ti));
 
-                 	  	  $arr['cr_max'] = (!empty($c[0]) ? $c[0] : '');
-                 	  	  $arr['cr_min'] = (!empty($cr[1]) ? $cr[1] : '');
-                 	  	  $arr['c_max'] = (!empty($c[0]) ? $c[0] : '');
-                 	  	  $arr['c_min'] = (!empty($c[1]) ? $c[1] : '');
-                 	  	  $arr['phos_max'] = (!empty($Phos[0]) ? $Phos[0] : '');
-                 	  	  $arr['phos_min'] = (!empty($Phos[1]) ? $Phos[1] : '');
-                 	  	  $arr['s_max'] = (!empty($s[0]) ? $s[0] : '');
-                 	  	  $arr['s_min'] = (!empty($s[1]) ? $s[1] : '');
-                 	  	  $arr['si_max'] = (!empty($si[0]) ? $si[0] : '');
-                 	  	  $arr['si_min'] = (!empty($si[1]) ? $si[1] : '');
-                 	  	  $arr['ti_max'] = (!empty($ti[0]) ? $ti[0] : '');
-                 	  	  $arr['ti_min'] = (!empty($ti[1]) ? $ti[1] : '');
-                 	  	  $arr['uom'] = "%";
-                 	  }
-                 	 // echo "<pre>";print_r($newcount);exit();
-			    	 
-			        return $arr;
-
-
-
-	    	 
-	    }
+                        $arr['cr_max'] = (!empty($c[0]) ? $c[0] : '');
+                        $arr['cr_min'] = (!empty($cr[1]) ? $cr[1] : '');
+                        $arr['c_max'] = (!empty($c[0]) ? $c[0] : '');
+                        $arr['c_min'] = (!empty($c[1]) ? $c[1] : '');
+                        $arr['phos_max'] = (!empty($Phos[0]) ? $Phos[0] : '');
+                        $arr['phos_min'] = (!empty($Phos[1]) ? $Phos[1] : '');
+                        $arr['s_max'] = (!empty($s[0]) ? $s[0] : '');
+                        $arr['s_min'] = (!empty($s[1]) ? $s[1] : '');
+                        $arr['si_max'] = (!empty($si[0]) ? $si[0] : '');
+                        $arr['si_min'] = (!empty($si[1]) ? $si[1] : '');
+                        $arr['ti_max'] = (!empty($ti[0]) ? $ti[0] : '');
+                        $arr['ti_min'] = (!empty($ti[1]) ? $ti[1] : '');
+                        $arr['uom'] = "%";
+                    }
+                   // echo "<pre>";print_r($newcount);exit();
+             
+              return $arr;
 
 
-	    public function totalRfqPrice($sche)
-	    {
-	    	      $tot_price = DB::table('quote_schedules')->where('schedule_no',$sche)
-                 	  ->whereNull('deleted_at')->first();
-                 	 // echo "<pre>";print_r($sche);exit();
-                 	  if(!empty($tot_price))
-                 	  {
 
-			    	   $tot_price = $tot_price->quantity * $tot_price->kam_price;
-			    	}else{
+         
+      }
 
-			    		 $tot_price = "";
-			    	}
 
-			    	return $tot_price;
-	    }
+      public function totalRfqPrice($sche)
+      {
+              $tot_price = DB::table('quote_schedules')->where('schedule_no',$sche)
+                    ->whereNull('deleted_at')->first();
+                   // echo "<pre>";print_r($sche);exit();
+                    if(!empty($tot_price))
+                    {
+
+               $tot_price = $tot_price->quantity * $tot_price->kam_price;
+            }else{
+
+               $tot_price = "";
+            }
+
+            return $tot_price;
+      }
 
         // ---------------------------- contarct no. update ---------------------------
 
-	  	public function updateContarctsNo(Request $request)
-	    {
+      public function updateContarctsNo(Request $request)
+      {
 
-	    	  try{   
-	    	  	     $date = $request->input('date');
+          try{   
+                 $date = $request->input('date');
                      $dt = date("Y-m-d", strtotime($date));
-                 	 SalesContarct::where('id',$request->input('id'))->update(['sc_no' => $request->input('sc_no'),'sc_dt' => $dt]);
-			    	 
-			        return response()->json(['status'=>1,
-			          'message' =>'success',
-			          'result' => 'Contract no. updated'],
-			          config('global.success_status'));
+                   SalesContarct::where('id',$request->input('id'))->update(['sc_no' => $request->input('sc_no'),'sc_dt' => $dt]);
+             
+              return response()->json(['status'=>1,
+                'message' =>'success',
+                'result' => 'Contract no. updated'],
+                config('global.success_status'));
 
 
-	      }catch(\Exception $e){
+        }catch(\Exception $e){
 
-	       return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
-	     }
+         return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
+       }
 
-	    	 
-	    }
-	    // ----------------------------------------------------------------------------------
-
-
-	    // ---------------------------- prepare so list ---------------------------
-
-	  	public function prepareSoList()
-	    {
-
-	    	  try{   
-	    	  	     $res = DB::table('sales_contracts')->leftjoin('orders','sales_contracts.po_no','orders.po_no')->select('sales_contracts.*','orders.po_date')->get()->toArray();
-			    	 
-			        return response()->json(['status'=>1,
-			          'message' =>'success',
-			          'result' => $res],
-			          config('global.success_status'));
+         
+      }
+      // ----------------------------------------------------------------------------------
 
 
-	      }catch(\Exception $e){
+      // ---------------------------- prepare so list ---------------------------
 
-	       return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
-	     }
+      public function prepareSoList()
+      {
 
-	    	 
-	    }
-	    // --------------------------------------------------------------------
+          try{   
+                 $res = DB::table('sales_contracts')->leftjoin('orders','sales_contracts.po_no','orders.po_no')->select('sales_contracts.*','orders.po_date')->get()->toArray();
+             
+              return response()->json(['status'=>1,
+                'message' =>'success',
+                'result' => $res],
+                config('global.success_status'));
 
 
-	 // ----------------------------- submit so -------------------------
+        }catch(\Exception $e){
+
+         return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
+       }
+
+         
+      }
+      // --------------------------------------------------------------------
+
+
+   // ----------------------------- submit so -------------------------
 
      public function so_submit(Request $request)
       {
@@ -382,10 +382,10 @@ class SalesContractController extends Controller
                    // echo "<pre>";print_r($newcount);exit();
              if(!empty($plant))
              {
-             	 $id = $plant->id;
+               $id = $plant->id;
              }else{
 
-             	$id = "";
+              $id = "";
              }
               return response()->json(['status'=>1,
                 'message' =>'success',
@@ -406,15 +406,15 @@ class SalesContractController extends Controller
 
       public function scNetValue($po_no)
       {
-      	 $sum = 0;
+         $sum = 0;
 
-      	 $res = DB::table('orders')->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
-      	 ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
-      	 ->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
-      	 ->where('orders.po_no',$po_no)->select('quote_schedules.kam_price')->get();
+         $res = DB::table('orders')->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
+         ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
+         ->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
+         ->where('orders.po_no',$po_no)->select('quote_schedules.kam_price')->get();
 
          foreach ($res as $key => $value) {
-         	
+          
             $sum += $value->kam_price;
          }
 
@@ -423,15 +423,15 @@ class SalesContractController extends Controller
 
       public function qty_ct($po_no)
       {
-      	 $sum = 0;
+         $sum = 0;
 
-      	 $res = DB::table('orders')->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
-      	 ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
-      	 ->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
-      	 ->where('orders.po_no',$po_no)->select('quote_schedules.quantity')->get();
+         $res = DB::table('orders')->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
+         ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
+         ->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
+         ->where('orders.po_no',$po_no)->select('quote_schedules.quantity')->get();
 
          foreach ($res as $key => $value) {
-         	
+          
             $sum += $value->quantity;
          }
 
@@ -629,6 +629,8 @@ class SalesContractController extends Controller
                   $data[$key]['Plant'] = $value->Plant;
                   $data[$key]['sc_no'] = $value->sc_no;
                   $data[$key]['ordr_no'] = $value->ordr_no;
+                  $data[$key]['finance_no'] = $value->finance_no;
+                  $data[$key]['payment_proc'] = $value->payment_proc;
 
               }
               return response()->json(['status'=>1,
@@ -653,12 +655,16 @@ class SalesContractController extends Controller
 
           try{   
 
-            $chk = DB::table('sc_excel_datas')->where('sc_no',$request->sc_no)->orWhere('ordr_no',$request->ordr_no)->get();
+
+            if(empty($request->ordr_no) && empty($request->finance_no) &&empty($request->payment_proc))
+            {
+                 $chk = DB::table('sc_excel_datas')->where('sc_no',$request->sc_no)->get()->toArray();
               // echo "<pre>";print_r($chk);exit();
+            
             if(empty($chk))
             {
                  $res = DB::table('sc_excel_datas')
-                 ->where('id',$request->id)->update(['sc_no' =>$request->sc_no,'ordr_no' => $request->ordr_no]);
+                 ->where('id',$request->id)->update(['sc_no' =>$request->sc_no,'ordr_no' => $request->ordr_no,'finance_no' => $request->finance_no,'payment_proc' => $request->payment_proc]);
 
               return response()->json(['status'=>1,
                 'message' =>'success',
@@ -668,10 +674,21 @@ class SalesContractController extends Controller
             else{
                    return response()->json(['status'=>1,
                 'message' =>'Not Updated',
-                'result' => 'Sales Contract or Sales order No. already exists'],
+                'result' => 'Sales Contract Number already exists.'],
                 config('global.success_status'));
 
             }
+          }else{
+
+                $res = DB::table('sc_excel_datas')
+                 ->where('id',$request->id)->update(['sc_no' =>$request->sc_no,'ordr_no' => $request->ordr_no,'finance_no' => $request->finance_no,'payment_proc' => $request->payment_proc]);
+
+              return response()->json(['status'=>1,
+                'message' =>'success',
+                'result' => 'Updated'],
+                config('global.success_status'));
+
+          }
 
 
         }catch(\Exception $e){

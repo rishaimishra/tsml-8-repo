@@ -121,6 +121,26 @@ class DashboardController extends Controller
 	            ->count();
 
 	        $data['Total_no_of_open_complaints'] = $custComplain;
+
+
+	        // ---------------- top 5 ytd cus ---------------------------
+            $ytddata = array();
+	        $ytd = DB::table('orders')
+	               ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
+	               ->leftjoin('users','quotes.user_id','users.id')
+	               ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
+	               ->select('users.org_name','quote_schedules.quantity',DB::raw("SUM(quote_schedules.quantity) as qtycount"))
+	               ->orderBy('qtycount', 'DESC')
+	               ->limit(5)
+	               ->where('users.zone',$getuser->zone)
+	               ->where('orders.status',1)->get();
+            foreach ($ytd as $key => $value) {
+            	  $ytddata[$key]['org_name'] = $value->org_name;
+            	  $ytddata[$key]['qtycount'] = $value->qtycount;
+            }
+	            
+	          $data['top_five_cust_sale'] = $ytddata;  
+	        // ----------------------------------------------------------
    		 }
    		 else if ($getuser->user_type == 'Sales' || $getuser->user_type == 'SM') { 
 
