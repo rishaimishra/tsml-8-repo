@@ -16,12 +16,11 @@ class MailService
          
             try {
 
-                // dd($emailcc);
+                // dd($sentTo);
              
                 // Email server settings
                 $mail->SMTPDebug = 0;
-                $mail->isSMTP();
-                $mail->SMTPDebug = 1;
+                $mail->isSMTP(); 
                 $mail->Host = 'smtp.office365.com';             //  smtp host
                 $mail->SMTPAuth = true;
                 $mail->Username = 'noreply.esales@tatasteelmining.com';   //  sender 
