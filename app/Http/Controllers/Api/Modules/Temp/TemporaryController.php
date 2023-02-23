@@ -15,7 +15,13 @@ class TemporaryController extends Controller
     {
     	 // echo "<pre>";print_r($request->all());exit();
           $ids = array();
-         foreach ($request->all() as $k => $vals) {
+
+          $encrypted = json_encode($request->all());
+                // $json = json_encode($encrypted1);
+          $password = "123456";
+
+          $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+         foreach ($decrypted as $k => $vals) {
            
         
           
@@ -82,9 +88,9 @@ class TemporaryController extends Controller
             $excel['ids'] = $ids;
             $excel['file'] = $file;
 
-            $password = "123456";
-            $encrypted = CryptoJsAes::encrypt($excel, $password);
-    	 	return response()->json(['status'=>1, 'message' =>'success','result' => $encrypted],config('global.success_status'));
+            // $password = "123456";
+            // $encrypted = CryptoJsAes::encrypt($excel, $password);
+    	 	return response()->json(['status'=>1, 'message' =>'success','result' => $excel],config('global.success_status'));
     	 
     }
 
