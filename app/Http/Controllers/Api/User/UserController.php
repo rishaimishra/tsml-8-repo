@@ -861,6 +861,7 @@ class UserController extends Controller
         // echo "<pre>";print_r($request->email);exit();
 
              $email = $request->email;
+             // dd($email);
              $sub = 'You have successfully regsitered';
      
              $html = 'mail.register';
@@ -868,9 +869,9 @@ class UserController extends Controller
              $cc_email = "";
              $data = "";
 
-            (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email);
+            $d = (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email);
              // Mail::send(new RfqGeneratedMail($data));
-
+             
              $msg = "Mail sent successfully";
              return response()->json(['status'=>1,'message' =>$msg],200);
     }
