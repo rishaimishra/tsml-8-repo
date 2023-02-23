@@ -21,10 +21,10 @@ class MailService
                 // Email server settings
                 $mail->SMTPDebug = 0;
                 $mail->isSMTP(); 
-                $mail->Host = 'smtp.office365.com';             //  smtp host
+                $mail->Host = 'smtp.googlemail.com';             //  smtp host
                 $mail->SMTPAuth = true;
-                $mail->Username = 'noreply.esales@tatasteelmining.com';   //  sender 
-                $mail->Password = '#)@00P!wap0c#%';       // sender password
+                $mail->Username = 'ramkrishnadharmachakra@gmail.com';   //  sender 
+                $mail->Password = 'vhhadnybbdwlnanl';       // sender password
                 $mail->SMTPSecure = 'tls';                  // encryption - ssl/tls
                 $mail->Port = 587;                          // port - 587/465
 

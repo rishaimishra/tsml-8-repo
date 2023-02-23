@@ -35,7 +35,7 @@ class SapPaymentTermsController extends Controller
           {
             $password = "123456";
             $encrypted = CryptoJsAes::encrypt($sapPayTerms, $password);
-            return response()->json(['status'=>1,'message' =>'success','result' => $sapPayTerms],config('global.success_status'));
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else
           { 
