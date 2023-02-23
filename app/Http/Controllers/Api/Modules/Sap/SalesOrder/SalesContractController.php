@@ -191,7 +191,7 @@ class SalesContractController extends Controller
              
               return response()->json(['status'=>1,
                 'message' =>'success',
-                'result' => $data],
+                'result' => $encrypted],
                 config('global.success_status'));
 
 

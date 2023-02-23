@@ -23,12 +23,13 @@ class MailService
                 $mail->isSMTP(); 
                 $mail->Host = 'smtp.googlemail.com';             //  smtp host
                 $mail->SMTPAuth = true;
-                $mail->Username = 'ramkrishnadharmachakra@gmail.com';   //  sender 
-                $mail->Password = 'vhhadnybbdwlnanl';       // sender password
+                $mail->Username = 'backupjeet96@gmail.com';   //  sender 
+                $mail->Password = 'qpscbjrbigosmngu';       // sender password 
                 $mail->SMTPSecure = 'tls';                  // encryption - ssl/tls
                 $mail->Port = 587;                          // port - 587/465
-
-                $mail->setFrom('noreply.esales@tatasteelmining.com', 'TSML Team');
+                 
+                
+                $mail->setFrom('backupjeet96@gmail.com', 'TSML Team');
                 $mail->addAddress($sentTo);
                 
                 if (!empty($emailcc)) 
