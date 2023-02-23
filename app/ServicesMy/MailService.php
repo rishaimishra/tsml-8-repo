@@ -19,15 +19,14 @@ class MailService
                 // dd($sentTo);
              
                 // Email server settings
-                $mail->SMTPDebug = 0;
+                $mail->SMTPDebug = 1;
                 $mail->isSMTP(); 
                 $mail->Host = 'smtp.googlemail.com';             //  smtp host
                 $mail->SMTPAuth = true;
-                $mail->Username = 'backupjeet96@gmail.com';   //  sender 
-                $mail->Password = 'qpscbjrbigosmngu';       // sender password 
+                $mail->Username = 'ramkrishnadharmachakra@gmail.com';   //  sender 
+                $mail->Password = 'vhhadnybbdwlnanl';       // sender password
                 $mail->SMTPSecure = 'tls';                  // encryption - ssl/tls
                 $mail->Port = 587;                          // port - 587/465
-                 
                 
                 $mail->setFrom('backupjeet96@gmail.com', 'TSML Team');
                 $mail->addAddress($sentTo);
