@@ -12,6 +12,7 @@ use Storage;
 use Response;
 use DB; 
 use Mail;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class SapPaymentTermsController extends Controller
 {
@@ -32,6 +33,8 @@ class SapPaymentTermsController extends Controller
 
           if(!empty($sapPayTerms))
           {
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($sapPayTerms, $password);
             return response()->json(['status'=>1,'message' =>'success','result' => $sapPayTerms],config('global.success_status'));
           }
           else

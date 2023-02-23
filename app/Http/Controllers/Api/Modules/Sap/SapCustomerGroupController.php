@@ -12,6 +12,7 @@ use Storage;
 use Response;
 use DB; 
 use Mail;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class SapCustomerGroupController extends Controller
 {
@@ -32,7 +33,9 @@ class SapCustomerGroupController extends Controller
 
           if(!empty($sapCustGroupData))
           {
-            return response()->json(['status'=>1,'message' =>'success','result' => $sapCustGroupData],config('global.success_status'));
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($sapCustGroupData, $password);
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else
           { 

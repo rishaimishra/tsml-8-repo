@@ -12,6 +12,7 @@ use Storage;
 use Response;
 use DB; 
 use Mail;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class SapDeliveryModeController extends Controller
 {
@@ -32,7 +33,9 @@ class SapDeliveryModeController extends Controller
 
           if(!empty($sapDelMode))
           {
-            return response()->json(['status'=>1,'message' =>'success','result' => $sapDelMode],config('global.success_status'));
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($sapDelMode, $password);
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else
           { 

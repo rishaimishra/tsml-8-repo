@@ -12,6 +12,7 @@ use Storage;
 use Response;
 use DB; 
 use Mail;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class SapFreightIndicationController extends Controller
 {
@@ -32,7 +33,9 @@ class SapFreightIndicationController extends Controller
 
           if(!empty($sapFreightIndi))
           {
-            return response()->json(['status'=>1,'message' =>'success','result' => $sapFreightIndi],config('global.success_status'));
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($sapFreightIndi, $password);
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else
           { 
