@@ -9,6 +9,7 @@ use App\Models\Models\Camnotification;
 use App\Models\Models\SalesNotification;
 use App\Models\Models\OptNotification;
 use App\Models\Models\PlantNotification;
+use App\Models\Models\SalesheadNotification;
 use App\Models\User;
 use JWTAuth;
 use Validator;
@@ -611,6 +612,140 @@ class NotificationController extends Controller
 		        return response()->json(['status'=>1,
 		          'message' =>'success',
 		          'result' => 'Ntification updated'],
+		          config('global.success_status'));
+
+
+      }catch(\Exception $e){
+
+       return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
+     }
+
+    	 
+    }
+
+
+
+    public function shNotificationSubmit(Request $request)
+    {
+
+    	  try{ 
+                 
+                 $data = array();
+		    	
+		         // echo "<pre>";print_r($request->input('desc'));exit();
+
+
+		    	 $data['desc'] = $request->input('desc');
+		    	 $data['desc_no'] = $request->input('desc_no');
+		    	 $data['url_type'] = "R";
+		    	 $data['status'] = 1;
+		    	 $data['sender_ids'] = $request->input('sender_ids');
+
+		    	 SalesheadNotification::create($data);
+
+		    	 // echo "<pre>";print_r($data);exit();
+		        return response()->json(['status'=>1,
+		          'message' =>'success',
+		          'result' => 'Notification submitted'],
+		          config('global.success_status'));
+
+
+      }catch(\Exception $e){
+
+       return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
+     }
+
+    	 
+    }
+
+
+
+    public function getShNotification()
+    {
+
+    	  try{ 
+
+                 $data = array();
+
+		         $res = DB::table('saleshead_notifications')
+                 ->leftjoin('users','saleshead_notifications.sender_ids','users.id')
+		         ->select('saleshead_notifications.*','users.name as cus_name')
+		         ->orderBy('saleshead_notifications.id','desc')
+		         ->where('saleshead_notifications.status',1)
+		         ->get();
+
+		         foreach ($res as $key => $value) {
+		         	 
+		         	 $data[$key]['id'] = $value->id;
+		         	 $data[$key]['desc'] = $value->desc;
+			    	 $data[$key]['desc_no'] = $value->desc_no;
+			    	 $data[$key]['user_id'] = $value->cus_name;
+			    	 $data[$key]['url_type'] = $value->url_type;
+			    	 $data[$key]['date'] = date("m-d-Y", strtotime($value->created_at));
+			    	 
+		         }
+		         
+		    	 
+
+
+		    	 // echo "<pre>";print_r($id);exit();
+		        return response()->json(['status'=>1,
+		          'message' =>'success',
+		          'result' => $data],
+		          config('global.success_status'));
+
+
+      }catch(\Exception $e){
+
+       return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
+     }
+
+    	 
+    }
+
+
+
+    public function upShNotification($id)
+    {
+
+    	  try{ 
+
+                 $data = array();
+
+		         $res = SalesheadNotification::where('id',$id)->update(['status' => 2]);
+		         
+
+		    	 // echo "<pre>";print_r($res);exit();
+		        return response()->json(['status'=>1,
+		          'message' =>'success',
+		          'result' => 'Status Updated'],
+		          config('global.success_status'));
+
+
+      }catch(\Exception $e){
+
+       return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
+     }
+
+    	 
+    }
+
+
+
+    public function upShNotificationAll()
+    {
+
+    	  try{ 
+
+                 $data = array();
+
+		         DB::table('saleshead_notifications')->update(['status' => 2]);
+		         
+
+		    	 // echo "<pre>";print_r($res);exit();
+		        return response()->json(['status'=>1,
+		          'message' =>'success',
+		          'result' => 'Status Updated'],
 		          config('global.success_status'));
 
 

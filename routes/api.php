@@ -266,6 +266,11 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
          Route::get('get_plant_notification/{id}',[NotificationController::class,'getPlantNotification']);
          Route::get('up_plant_notification/{id}',[NotificationController::class,'clearsinglemsg']);
          Route::get('clearall_plant_noti',[NotificationController::class,'clearallPlantNoti']);
+
+         Route::post('sh_notification_submit',[NotificationController::class,'shNotificationSubmit']);
+         Route::get('get_sh_notification',[NotificationController::class,'getShNotification']);
+         Route::get('up_sh_notification/{id}',[NotificationController::class,'upShNotification']);
+       Route::get('up_sh_notification_all',[NotificationController::class,'upShNotificationAll']);
    	// ----------------- sap sales order --------------------------------------------
 
         Route::post('get_plant_id',[SalesContractController::class,'getPlantId']);
