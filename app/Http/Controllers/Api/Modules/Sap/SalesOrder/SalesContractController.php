@@ -142,7 +142,8 @@ class SalesContractController extends Controller
       {
 
           try{ 
-                   
+                   $encrypted = array();
+
                    $res = DB::table('orders')->leftjoin('sc_transactions','orders.rfq_no','sc_transactions.rfq_no')
                    ->leftjoin('plants','sc_transactions.plant','plants.id')
                    ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
@@ -151,6 +152,9 @@ class SalesContractController extends Controller
                        ->select('sc_transactions.*','plants.code as pcode','users.name','orders.po_date','orders.cus_po_no','orders.po_date','users.user_code','users.addressone','users.addresstwo','users.city','users.state','users.pincode','users.id as uid')->where('orders.po_no',$po_no)->get();
                    // echo "<pre>";print_,'orders.po_date')->where('orders.po_no',$po_no)->get();
                    // echo "<pre>";print_r($newcount);exit();
+
+                  if(!empty($res))
+                  {
                    foreach ($res as $key => $value) {
                     
                      $data[$key]['id'] = $value->id;
@@ -180,6 +184,10 @@ class SalesContractController extends Controller
 
            
                    }
+
+                   $password = "123456";
+                   $encrypted = CryptoJsAes::encrypt($data, $password);
+                 }
              
               return response()->json(['status'=>1,
                 'message' =>'success',
@@ -481,12 +489,15 @@ class SalesContractController extends Controller
            
 
           }
+
+                   $password = "123456";
+                   $encrypted = CryptoJsAes::encrypt($result, $password);
         }
         
         
               return response()->json(['status'=>1,
                 'message' =>'success',
-                'result' => $result],
+                'result' => $encrypted],
                 config('global.success_status'));
 
 
