@@ -129,17 +129,41 @@ class DashboardController extends Controller
 	               ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
 	               ->leftjoin('users','quotes.user_id','users.id')
 	               ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
-	               ->select('users.org_name','quote_schedules.quantity',DB::raw("SUM(quote_schedules.quantity) as qtycount"))
+	               ->select('users.org_name','users.id as custid','quote_schedules.quantity',DB::raw("SUM(quote_schedules.quantity) as qtycount"))
 	               ->orderBy('qtycount', 'DESC')
 	               ->limit(5)
 	               ->where('users.zone',$getuser->zone)
-	               ->where('orders.status',1)->get();
+	               ->where('orders.status',1)
+	               ->where('orders.created_at','>=', $fromdate)
+                   ->where('orders.created_at','<=', $todate) 
+	               ->get();
+	               
             foreach ($ytd as $key => $value) {
             	  $ytddata[$key]['org_name'] = $value->org_name;
             	  $ytddata[$key]['qtycount'] = $value->qtycount;
+
+            	  $ortherqua = DB::table('orders')
+	               ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
+	               ->leftjoin('users','quotes.user_id','users.id')
+	               ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
+	               ->select('users.org_name','users.id as custid','quote_schedules.quantity',DB::raw("SUM(quote_schedules.quantity) as qtycount")) 
+	               ->where('users.zone',$getuser->zone)
+	               ->where('orders.status',1)
+	               ->where('quotes.user_id','!=',$value->custid)
+	               ->where('orders.created_at','>=', $fromdate)
+                   ->where('orders.created_at','<=', $todate) 
+	               ->get();
+	                
+	               foreach ($ortherqua as $key => $qua) { 
+            	  $ytddata[$key]['others_qua'] = $qua->qtycount;
+            	}
+
             }
+
+             
+	        
 	            
-	          $data['top_five_cust_sale'] = $ytddata;  
+	        $data['top_five_cust_sale'] = $ytddata;  
 	        // ----------------------------------------------------------
    		 }
    		 else if ($getuser->user_type == 'Sales' || $getuser->user_type == 'SM') { 
