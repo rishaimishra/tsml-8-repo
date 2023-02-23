@@ -12,6 +12,8 @@ use Storage;
 use Response;
 use DB; 
 use Mail;
+use Nullix\CryptoJsAes\CryptoJsAes;
+
 
 class SapIncotermsController extends Controller
 {
@@ -32,7 +34,9 @@ class SapIncotermsController extends Controller
 
           if(!empty($sapIncoterms))
           {
-            return response()->json(['status'=>1,'message' =>'success','result' => $sapIncoterms],config('global.success_status'));
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($sapIncoterms, $password);
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else
           { 

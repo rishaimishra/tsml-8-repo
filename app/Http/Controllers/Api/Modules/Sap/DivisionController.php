@@ -12,6 +12,7 @@ use Storage;
 use Response;
 use DB; 
 use Mail;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class DivisionController extends Controller
 {
@@ -34,7 +35,9 @@ class DivisionController extends Controller
 
           if(!empty($sapDivision))
           {
-            return response()->json(['status'=>1,'message' =>'success','result' => $sapDivision],config('global.success_status'));
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($sapDivision, $password);
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else
           { 

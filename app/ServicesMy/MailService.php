@@ -16,12 +16,12 @@ class MailService
          
             try {
 
-                // dd($emailcc);
+                // dd($sentTo);
              
                 // Email server settings
-                $mail->SMTPDebug = 2;
-                $mail->isSMTP();
-                $mail->Host = 'smtp.gmail.com';             //  smtp host
+                $mail->SMTPDebug = 0;
+                $mail->isSMTP(); 
+                $mail->Host = 'smtp.office365.com';             //  smtp host
                 $mail->SMTPAuth = true;
                 $mail->Username = 'backupjeet96@gmail.com';   //  sender 
                 $mail->Password = 'qpscbjrbigosmngu';       // sender password

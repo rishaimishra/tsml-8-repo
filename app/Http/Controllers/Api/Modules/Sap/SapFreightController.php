@@ -12,7 +12,7 @@ use Storage;
 use Response;
 use DB; 
 use Mail;
-
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class SapFreightController extends Controller
 {
@@ -33,7 +33,9 @@ class SapFreightController extends Controller
 
           if(!empty($sapFreight))
           {
-            return response()->json(['status'=>1,'message' =>'success','result' => $sapFreight],config('global.success_status'));
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($sapFreight, $password);
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else
           { 

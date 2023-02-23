@@ -12,6 +12,7 @@ use Storage;
 use Response;
 use DB; 
 use Mail;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class SapContractTypeController extends Controller
 {
@@ -32,7 +33,9 @@ class SapContractTypeController extends Controller
 
           if(!empty($sapConData))
           {
-            return response()->json(['status'=>1,'message' =>'success','result' => $sapConData],config('global.success_status'));
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($sapConData, $password);
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else
           { 

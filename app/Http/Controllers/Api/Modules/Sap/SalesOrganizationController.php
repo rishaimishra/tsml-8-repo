@@ -12,6 +12,7 @@ use Storage;
 use Response;
 use DB; 
 use Mail;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class SalesOrganizationController extends Controller
 {
@@ -32,7 +33,9 @@ class SalesOrganizationController extends Controller
 
           if(!empty($sapSalesOrgData))
           {
-            return response()->json(['status'=>1,'message' =>'success','result' => $sapSalesOrgData],config('global.success_status'));
+            $password = "123456";
+            $encrypted = CryptoJsAes::encrypt($sapSalesOrgData, $password);
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else
           { 
