@@ -19,16 +19,16 @@ class MailService
                 // dd($sentTo);
              
                 // Email server settings
-                $mail->SMTPDebug = 1;
+                $mail->SMTPDebug = 0;
                 $mail->isSMTP(); 
-                $mail->Host = 'smtp.googlemail.com';             //  smtp host
+                $mail->Host = 'smtp.office365.com';             //  smtp host
                 $mail->SMTPAuth = true;
-                $mail->Username = 'ramkrishnadharmachakra@gmail.com';   //  sender 
-                $mail->Password = 'vhhadnybbdwlnanl';       // sender password
+                $mail->Username = 'noreply.esales@tatasteelmining.com';   //  sender 
+                $mail->Password = 'Melc0we123!@';       // sender password
                 $mail->SMTPSecure = 'tls';                  // encryption - ssl/tls
                 $mail->Port = 587;                          // port - 587/465
                 
-                $mail->setFrom('backupjeet96@gmail.com', 'TSML Team');
+                $mail->setFrom('noreply.esales@tatasteelmining.com', 'TSML Team');
                 $mail->addAddress($sentTo);
                 
                 if (!empty($emailcc)) 
@@ -76,7 +76,7 @@ class MailService
                 $mail->Host = 'smtp.office365.com';             //  smtp host
                 $mail->SMTPAuth = true;
                 $mail->Username = 'noreply.esales@tatasteelmining.com';   //  sender 
-                $mail->Password = '#)@00P!wap0c#%';       // sender password
+                $mail->Password = 'Melc0we123!@';       // sender password
                 $mail->SMTPSecure = 'tls';                  // encryption - ssl/tls
                 $mail->Port = 587;                           // port - 587/465
 

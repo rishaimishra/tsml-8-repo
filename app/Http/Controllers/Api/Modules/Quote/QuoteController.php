@@ -1506,7 +1506,8 @@ class QuoteController extends Controller
             // $result[$key]['sizes'] = $value->pro_size;
             $result[$key]['slug'] = $value->slug;
             $result[$key]['status'] = $value->status;
-            $result[$key]['primary_image_url'] = 'https://beas.in/mje-shop/storage/app/public/images/product/'.$value->primary_image;
+            $result[$key]['primary_image_url'] = asset('storage/app/public/images/product/'.$value->primary_image);
+            // 'storage/app/public/images/product/'.$value->primary_image;
             $result[$key]['schedule'] = $this->getPoSchedules($value->qid);
             $result[$key]['quote_id'] = $value->qid;
             $result[$key]['user_id'] = $value->user_id;
