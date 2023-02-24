@@ -529,7 +529,9 @@ class PriceManagementController extends Controller
             // }
             // dd($userbilltoaddr,$usershiptoaddr);
             if (!empty($decrypted['destation_location']) && !empty($decrypted['location']))  {
+              // dd($decrypted['destation_location'],$decrypted['location']);
                 $getdeliverycost = Freights::where('pickup_from',$decrypted['pickup_from'])->where('location',$decrypted['location'])->where('destation_location',$decrypted['destation_location'])->first(); 
+                // dd($getdeliverycost);
             }
             
              // dd($getdeliverycost);

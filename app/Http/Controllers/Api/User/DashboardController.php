@@ -124,46 +124,71 @@ class DashboardController extends Controller
 
 
 	        // ---------------- top 5 ytd cus ---------------------------
+
+	        
             $ytddata = array();
 	        $ytd = DB::table('orders')
 	               ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
-	               ->leftjoin('users','quotes.user_id','users.id')
-	               ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
-	               ->select('users.org_name','users.id as custid','quote_schedules.quantity',DB::raw("SUM(quote_schedules.quantity) as qtycount"))
-	               ->orderBy('qtycount', 'DESC')
-	               ->limit(5)
+	               ->leftjoin('users','quotes.user_id','users.id') 
+	               ->select('users.org_name','users.id as custid','quotes.rfq_no','quotes.id') 
 	               ->where('users.zone',$getuser->zone)
-	               ->where('orders.status',1)
-	               ->where('orders.created_at','>=', $fromdate)
-                   ->where('orders.created_at','<=', $todate) 
+	               ->whereNull('quotes.deleted_at')
+	               ->where('orders.status',2)  
 	               ->get();
-	               
-            foreach ($ytd as $key => $value) {
-            	  $ytddata[$key]['org_name'] = $value->org_name;
-            	  $ytddata[$key]['qtycount'] = $value->qtycount;
 
-            	  $ortherqua = DB::table('orders')
-	               ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
-	               ->leftjoin('users','quotes.user_id','users.id')
-	               ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
-	               ->select('users.org_name','users.id as custid','quote_schedules.quantity',DB::raw("SUM(quote_schedules.quantity) as qtycount")) 
-	               ->where('users.zone',$getuser->zone)
-	               ->where('orders.status',1)
-	               ->where('quotes.user_id','!=',$value->custid)
-	               ->where('orders.created_at','>=', $fromdate)
-                   ->where('orders.created_at','<=', $todate) 
-	               ->get();
-	                
-	               foreach ($ortherqua as $key => $qua) { 
-            	  $ytddata[$key]['others_qua'] = $qua->qtycount;
-            	}
+	        
+	             // dd($ytd);
 
-            }
+	        
+
+	        $topfdive = array();
+	        foreach ($ytd as $key => $values) {
+	        	$ytddata =0;
+	        	$ortherqua = DB::table('quote_schedules') 
+	        	->select('quantity')
+	               ->where('quote_id','=',$values->id) 	                
+	               ->get(); 
+                  // dd($ortherqua);
+	               foreach ($ortherqua as $k => $v) { 
+	               	  $ytddata += $v->quantity; 
+	               	  // echo "<pre><br>";print($ortherqua);
+	               }
+
+	               // array_push($topfdive,$ytddata); 
+	               $comp = $values->org_name;	
+
+	               if (array_key_exists($comp,$topfdive))
+					  {
+					       $sum1 = $topfdive[$comp] + $ytddata;
+
+					       $topfdive[$comp] = $sum1;
+					  }
+					else
+					  {
+					      $topfdive[$comp] = $ytddata;
+					  }
+	                  
+	        }
+	        // dd($topfdive);
+
+	       
+			arsort($topfdive);
+			$largest = array_slice($topfdive, 0, 5, true);
+			$rest = array_slice($topfdive,5);
+
+			$rest_sum = array_sum($rest);
+	          
+
+			$tot_arra = array();
+
+           $largest['others'] = $rest_sum;
+		    // array_push($largest,$rest_sum);
+		   // dd($largest,$rest_sum);exit(); 
 
              
 	        
 	            
-	        $data['top_five_cust_sale'] = $ytddata;  
+	        $data['top_five_cust_sale'] = $largest;  
 	        // ----------------------------------------------------------
    		 }
    		 else if ($getuser->user_type == 'Sales' || $getuser->user_type == 'SM') { 
