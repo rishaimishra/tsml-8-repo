@@ -601,6 +601,7 @@ class SalesContractController extends Controller
          
          $email = "mihirbhunia.partners@tatasteelmining.com";
          $attach = "";
+         $cc_email = ["rahul.maurya@mjunction.in"];
 
          (new MailService)->addattachmentmail($sub,$html,$email,$data,$cc_email,$attach);
 
