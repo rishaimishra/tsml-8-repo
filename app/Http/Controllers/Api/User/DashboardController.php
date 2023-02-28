@@ -81,6 +81,7 @@ class DashboardController extends Controller
 
 	        $data['Total_no_of_open_complaints'] = $custComplain;
    		 }
+	  	 
    		 else if ($getuser->user_type == 'Kam') {
    		 	$quote = DB::table('orders')
             ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')  
@@ -184,6 +185,7 @@ class DashboardController extends Controller
            $largest['others'] = $rest_sum;
 		    // array_push($largest,$rest_sum);
 		   // dd($largest,$rest_sum);exit(); 
+		   // dd($largest);
 
              
 	        
@@ -191,7 +193,7 @@ class DashboardController extends Controller
 	        $data['top_five_cust_sale'] = $largest;  
 	        // ----------------------------------------------------------
    		 }
-   		 else if ($getuser->user_type == 'Sales' || $getuser->user_type == 'SM') { 
+   		 else if ($getuser->user_type == 'Sales' || $getuser->user_type == 'SM'|| $getuser->user_type == 'OPT') { 
 
    		 	// Show data according to financial year.....
    		 	$volumeCon = DB::table('quotes')

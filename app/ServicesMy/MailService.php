@@ -24,7 +24,7 @@ class MailService
                 $mail->Host = 'smtp.office365.com';             //  smtp host
                 $mail->SMTPAuth = true;
                 $mail->Username = 'noreply.esales@tatasteelmining.com';   //  sender 
-                $mail->Password = 'Melc0we123!@';       // sender password
+                $mail->Password = 'Tsml@1234';       // sender password
                 $mail->SMTPSecure = 'tls';                  // encryption - ssl/tls
                 $mail->Port = 587;                          // port - 587/465
                 
