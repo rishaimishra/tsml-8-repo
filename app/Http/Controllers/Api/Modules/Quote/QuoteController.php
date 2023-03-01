@@ -737,6 +737,7 @@ class QuoteController extends Controller
             $result[$key]['slug'] = $value['product']['slug'];
             $result[$key]['status'] = $value['product']['status'];
             $result[$key]['quotest'] = $value['kam_status'];
+            $result[$key]['quote_type'] = $value['quote_type'];
             $result[$key]['primary_image_url'] = asset('storage/app/public/images/product/'.$value['category']['primary_image']);
             $result[$key]['schedule'] = $this->getSubcatname($value['schedules'],$value['rfq_no']);
             $result[$key]['quote_id'] = $value['id'];

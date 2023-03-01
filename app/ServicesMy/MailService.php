@@ -34,7 +34,7 @@ class MailService
                 $mail->Host = 'smtp.office365.com';             //  smtp host
                 $mail->SMTPAuth = true;
                 $mail->Username = 'noreply.esales@tatasteelmining.com';   //  sender 
-                $mail->Password = 'Tsml@1234';       // sender password
+                $mail->Password = 'twrvs&5#4(';       // sender password
                 $mail->SMTPSecure = 'tls';                  // encryption - ssl/tls
                 $mail->Port = 587; 
 
@@ -81,12 +81,12 @@ class MailService
              
                 // Email server settings
                 // $mail->SMTPDebug = 0;
-                $mail->SMTPDebug = 1;
+                $mail->SMTPDebug = 0;
                 $mail->isSMTP();
                 $mail->Host = 'smtp.office365.com';             //  smtp host
                 $mail->SMTPAuth = true;
                 $mail->Username = 'noreply.esales@tatasteelmining.com';   //  sender 
-                $mail->Password = 'Tsml@1234';       // sender password
+                $mail->Password = 'twrvs&5#4(';       // sender password
                 $mail->SMTPSecure = 'tls';                  // encryption - ssl/tls
                 $mail->Port = 587;                           // port - 587/465
 
