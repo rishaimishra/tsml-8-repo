@@ -922,7 +922,7 @@ class UserController extends Controller
         $password = "123456";
 
         $decrypted = CryptoJsAes::decrypt($encrypted, $password);
-        // dd($request->all());
+        // dd($decrypted);
         // $this->validate($request, [
         //     'otp' =>'required|numeric|min:6|max:6',
         //     'password' =>'required|string|min:6|required_with:password-confirm', 
@@ -935,12 +935,14 @@ class UserController extends Controller
         $validator = Validator::make($decrypted, [
                 'email' =>'required|string|email|max:255',
                 'otp' =>'required|numeric|digits:6',
+                'old_pass' =>'required|string|min:6',
                 'password' =>'required|string|min:6|required_with:password-confirm', 
                 'password_confirm' =>'required|required_with:password|same:password',   
             ],
             [ 
               'otp.required'=>'OTP is required.',
                 'otp.digits'=>'Enter your 6 digits OTP.',
+                'old_pass.required'=>'The current password field is required',
                 'password_confirm.same'=>'The confirm password and password must match.',
                 'password_confirm.required'=>'The confirm password field is required'
             ]
@@ -952,7 +954,7 @@ class UserController extends Controller
             }
      
      $chkreset = DB::table('reset_otps')->where('email',$decrypted['email'])->where('otp',$decrypted['otp'])->where('status',1)->first();
-  // dd($chkreset);
+  // dd($decrypted['email'],$decrypted['otp']);
      if(!empty($chkreset))
      {
         $chkOtp = User::where('email',$decrypted['email'])->first();
@@ -961,22 +963,39 @@ class UserController extends Controller
             if($decrypted['password'] == $decrypted['password_confirm'] && $decrypted['password']){
                  // dd($request->password);
                 
-                $update['password'] = Hash::make($decrypted['password']);
-                $update['login_attempt'] = 2;
-               
-                // dd($update);
-                $user = User::Where('id',$chkOtp->id)->update($update);
-                $today = date('Y-m-d');
-                RegistrationLog::where('user_email',$decrypted['email'])->update(['created' => $today]);
-                DB::table('reset_otps')->where('id',$chkreset->id)->update(['status'=> 2]);
+                if (\Hash::check($decrypted['old_pass'], $chkOtp->password)) 
+                {
 
-                if($user) {
-                    return response()->json(['status'=>1,'message' =>'Password has been changed !!'],200);
+                    $update['password'] = Hash::make($decrypted['password']);
+                    $update['login_attempt'] = 2;
+                   
+                    // dd($update);
+                    $user = User::Where('id',$chkOtp->id)->update($update);
+                    $today = date('Y-m-d');
+                    RegistrationLog::where('user_email',$decrypted['email'])->update(['created' => $today]);
+                    DB::table('reset_otps')->where('id',$chkreset->id)->update(['status'=> 2]);
+
+                    if($user) {
+                        return response()->json(['status'=>1,'message' =>'Password change successfully'],200);
+                         
+                    } else {
+                        $response['error']['message'] = "Somthing went be wrong";
+                        return Response::json($response); 
+                    }
+
+                    // $input['password'] = \Hash::make($request->password);
+                    // $saveuser = User::where('id',$user->id)->update($input);
+                    // return response()->json(array("status"=>1,"message"=>"Password change successfully ."));
                      
-                } else {
-                    $response['error']['message'] = "Somthing went be wrong";
-                    return Response::json($response); 
                 }
+                else 
+                {
+                    return response()->json(['status'=>0,'message' => 'Current  password does not match please try again!']); 
+                    
+                }
+
+
+                
             } else {
                 $response['error']['message'] = "Password and Confirm Password not matched";
                 return Response::json($response);  
@@ -1003,7 +1022,7 @@ class UserController extends Controller
         $decrypted = CryptoJsAes::decrypt($encrypted, $password);
 
          $cc_email = array();
-         
+         // dd($decrypted['email']);
          $rand = rand(100000,999999);
          $res = DB::table('reset_otps')->insert(['email' => $decrypted['email'],'otp' => $rand,'status' => 1]);
          
