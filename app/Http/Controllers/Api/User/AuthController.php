@@ -20,6 +20,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use Response;
 use Mail;
 use DB;
+use DateTime;
 use Nullix\CryptoJsAes\CryptoJsAes;
 
 class AuthController extends Controller
@@ -132,7 +133,15 @@ class AuthController extends Controller
                    }
                    else{
                     $otp = random_int(100000, 999999); 
-                    $inputotp['login_otp'] = $otp; 
+                    $inputotp['login_otp'] = $otp;
+
+                    $datestime = date("Y-m-d H:m:s");
+                    $endTime = strtotime("+3 minutes", strtotime($datestime));
+                    $dtime =  date('Y-m-d h:i:s', $endTime);
+                    // dd($datestime,$dtime);
+
+                     
+                    $inputotp['otp_expires_time'] = $dtime; 
                     $categoryData = User::where('email',$decrypted['email'])->update($inputotp); 
                     $sub = "OTP For Login";
                     $html = 'mail.Otpverificationmail';
@@ -287,12 +296,31 @@ class AuthController extends Controller
         // dd($id);
         if($authChk == 0 && Auth::user()->jwt_token == NULL)
         {
-          // dd(Auth::user()->login_otp);
+          // dd($decrypted);
             if (Auth::user()->login_otp == $decrypted['logotp']) {
               // dd('ok to login');
-              $userArr['user_id'] = Auth::user()->id;
-              $userArr['user_name'] = Auth::user()->org_name;
-              $userArr['user_type'] = Auth::user()->user_type;
+              $userdata = User::where('id',Auth::user()->id)->first();
+              // dd($userdata->otp_expires_time);
+              // $to = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $userdata->otp_expires_time);
+              // $from = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', date("Y-m-d H:m:s"));
+              // // dd($to,$from);
+              // $diff_in_minutes = $to->diffInMinutes($from);
+
+               
+              // $datetime1 = new DateTime($userdata->otp_expires_time);
+             //  $datetime2 = new DateTime('Y-m-d H:m:s');
+             //  $interval = $datetime1->diff($datetime2);
+             // $diff_minutes =  $interval->format('%h')." Hours ".$interval->format('%i')." Minutes";
+             // dd($diff_minutes);
+                $d = date("Y-m-d H:m:s");
+              $from_time = strtotime($userdata->otp_expires_time); 
+              $to_time = strtotime(date("Y-m-d H:m:s"));
+              $diff_minutes = round(abs($from_time - $to_time) / 60,2). " minutes";
+              dd($d,$from_time,$to_time,$diff_minutes);
+
+              $userArr['user_id'] = $userdata->id;
+              $userArr['user_name'] = $userdata->org_name;
+              $userArr['user_type'] = $userdata->user_type;
               $updata['is_loggedin'] = 1;
               $updata['login_count'] = 0;
               $updata['login_otp'] = NULL;
