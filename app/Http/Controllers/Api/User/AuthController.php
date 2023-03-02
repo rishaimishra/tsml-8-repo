@@ -300,38 +300,40 @@ class AuthController extends Controller
             if (Auth::user()->login_otp == $decrypted['logotp']) {
               // dd('ok to login');
               $userdata = User::where('id',Auth::user()->id)->first();
-              // dd($userdata->otp_expires_time);
-              // $to = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', $userdata->otp_expires_time);
-              // $from = \Carbon\Carbon::createFromFormat('Y-m-d H:s:i', date("Y-m-d H:m:s"));
-              // // dd($to,$from);
-              // $diff_in_minutes = $to->diffInMinutes($from);
 
-               
-              // $datetime1 = new DateTime($userdata->otp_expires_time);
-             //  $datetime2 = new DateTime('Y-m-d H:m:s');
-             //  $interval = $datetime1->diff($datetime2);
-             // $diff_minutes =  $interval->format('%h')." Hours ".$interval->format('%i')." Minutes";
-             // dd($diff_minutes);
-                $d = date("Y-m-d H:m:s");
-              $from_time = strtotime($userdata->otp_expires_time); 
-              $to_time = strtotime(date("Y-m-d H:m:s"));
-              $diff_minutes = round(abs($from_time - $to_time) / 60,2). " minutes";
-              dd($d,$from_time,$to_time,$diff_minutes);
 
-              $userArr['user_id'] = $userdata->id;
-              $userArr['user_name'] = $userdata->org_name;
-              $userArr['user_type'] = $userdata->user_type;
-              $updata['is_loggedin'] = 1;
-              $updata['login_count'] = 0;
-              $updata['login_otp'] = NULL;
-              $updata['jwt_token'] = $jwt_token;
-              $upuser = User::where('id',Auth::user()->id)->update($updata);
-              return response()->json([
-                  'success' => true,
-                  'data' => $userArr,
-                  'login_attempt' => Auth::user()->login_attempt,
-                  'token' => $jwt_token,
-              ]);
+              $datetime_1 = $userdata->otp_expires_time;
+              $datetime_2 = date("Y-m-d H:i:s");
+
+              // dd($datetime_1,$datetime_2);
+
+              $from_time = strtotime($datetime_1);
+              $to_time = strtotime($datetime_2);
+              $diff_minutes = round(abs($from_time - $to_time) / 60,2);
+              
+              // dd($datetime_1,$datetime_2,$diff_minutes);
+
+              if ($diff_minutes>3) 
+              {
+               return response()->json(['success' => false,'message' => 'OTP expired !!']);
+              }
+              else{
+                $userArr['user_id'] = $userdata->id;
+                $userArr['user_name'] = $userdata->org_name;
+                $userArr['user_type'] = $userdata->user_type;
+                $updata['is_loggedin'] = 1;
+                $updata['login_count'] = 0;
+                $updata['login_otp'] = NULL;
+                $updata['jwt_token'] = $jwt_token;
+                $upuser = User::where('id',Auth::user()->id)->update($updata);
+                return response()->json([
+                    'success' => true,
+                    'data' => $userArr,
+                    'login_attempt' => Auth::user()->login_attempt,
+                    'token' => $jwt_token,
+                ]);
+              } 
+              
             }
             else{
               return response()->json([
