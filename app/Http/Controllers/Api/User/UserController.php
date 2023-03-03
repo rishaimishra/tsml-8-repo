@@ -954,7 +954,8 @@ class UserController extends Controller
                 return Response::json($response);
             }
      
-     $chkreset = DB::table('reset_otps')->where('email',$decrypted['email'])->where('otp',$decrypted['otp'])->where('status',1)->first();
+     // $chkreset = DB::table('reset_otps')->where('email',$decrypted['email'])->where('otp',$decrypted['otp'])->where('status',1)->first();
+     $chkreset = User::where('remember_token',$decrypted['otp'])->where('email',$decrypted['email'])->first();
   // dd($decrypted['email'],$decrypted['otp']);
      if(!empty($chkreset))
      {
@@ -966,23 +967,47 @@ class UserController extends Controller
                 
                 if (\Hash::check($decrypted['old_pass'], $chkOtp->password)) 
                 {
+                     
+                    $datetime_1 = $chkOtp->otp_expires_time;
+                    $datetime_2 = date("Y-m-d H:i:s");
 
-                    $update['password'] = Hash::make($decrypted['password']);
-                    $update['login_attempt'] = 2;
-                   
-                    // dd($update);
-                    $user = User::Where('id',$chkOtp->id)->update($update);
-                    $today = date('Y-m-d');
-                    RegistrationLog::where('user_email',$decrypted['email'])->update(['created' => $today]);
-                    DB::table('reset_otps')->where('id',$chkreset->id)->update(['status'=> 2]);
+                      // dd($datetime_1,$datetime_2);
 
-                    if($user) {
-                        return response()->json(['status'=>1,'message' =>'Password change successfully'],200);
+                    $from_time = strtotime($datetime_1);
+                    $to_time = strtotime($datetime_2);
+                    $diff_minutes = round(abs($from_time - $to_time) / 60,2);
+
+
+                    if ($diff_minutes>3) {
+                         return response()->json(['status'=>0,'message' =>'OTP expired !!']);
+                        // $response['error']['message'] = "OTP expired !!";
+                        //     return Response::json($response);  
                          
-                    } else {
-                        $response['error']['message'] = "Somthing went be wrong";
-                        return Response::json($response); 
                     }
+                    else{
+
+
+
+                        $update['login_attempt'] = 2;
+                        $update['password'] = Hash::make($decrypted['password']);
+                        $update['remember_token'] = '';
+
+                        $user = User::Where('id',$chkOtp->id)->update($update);
+                        $today = date('Y-m-d');
+                        RegistrationLog::where('user_email',$decrypted['email'])->update(['created' => $today]);
+                        DB::table('reset_otps')->where('id',$chkreset->id)->update(['status'=> 2]);
+
+                        if($user) {
+                            return response()->json(['status'=>1,'message' =>'Password change successfully'],200);
+                             
+                        } else {
+                            $response['error']['message'] = "Somthing went be wrong";
+                            return Response::json($response); 
+                        }
+
+                    } 
+                     
+                    
 
                     // $input['password'] = \Hash::make($request->password);
                     // $saveuser = User::where('id',$user->id)->update($input);
@@ -1005,7 +1030,7 @@ class UserController extends Controller
 
         }
         else {
-                $response['error']['message'] = "OTP not matched";
+                $response['error']['message'] = "Invalid OTP or email please check !!";
                 return Response::json($response);  
             } 
 
@@ -1022,9 +1047,14 @@ class UserController extends Controller
 
         $decrypted = CryptoJsAes::decrypt($encrypted, $password);
 
-         $cc_email = array();
+        $cc_email = array();
          // dd($decrypted['email']);
-         $rand = rand(100000,999999);
+        $datestime = date("Y-m-d H:i:s");
+        $endTime = strtotime("+3 minutes", strtotime($datestime));
+        $dtime =  date('Y-m-d h:i:s', $endTime);
+
+        $rand = rand(100000,999999);
+
          $res = User::where('email',$decrypted['email'])->update(['remember_token'=>$rand,'otp_expires_time'=>$dtime]);
 
          // $res = DB::table('reset_otps')->insert(['email' => $decrypted['email'],'otp' => $rand,'status' => 1]);

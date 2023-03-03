@@ -410,11 +410,18 @@ class AuthController extends Controller
               
             }else{
                
-                $otp = random_int(100000, 999999); 
+               
+
+              $datestime = date("Y-m-d H:i:s");
+              $endTime = strtotime("+3 minutes", strtotime($datestime));
+              $dtime =  date('Y-m-d h:i:s', $endTime);
+
+              $otp = random_int(100000, 999999);
 
               $input['mob_number'] = $request->mobile_no;
               $input['email'] = $request->email;
               $input['otp'] = $otp;
+              $input['mobotp_expires_time'] = $dtime;
 
               $categoryData = OtpVerification::create($input);  
 
@@ -473,6 +480,26 @@ class AuthController extends Controller
                 {
                     if ($chkmob->otp == $request->otp) 
                     {
+
+                      
+
+                      $datetime_1 = $chkmob->mobotp_expires_time;
+                      $datetime_2 = date("Y-m-d H:i:s");
+
+                      $from_time = strtotime($datetime_1);
+                      $to_time = strtotime($datetime_2);
+                      $diff_minutes = round(abs($from_time - $to_time) / 60,2);
+                       // dd($datetime_1,$datetime_2,$diff_minutes);
+                      // dd($diff_minutes);
+
+                      if ($diff_minutes>3) {
+                        return response()->json(['status'=>0,'message' => array('OTP expired !!')]);
+                           // return response()->json(['status'=>0,'message' =>'OTP expired !!']);
+                          // $response['error']['message'] = "OTP expired !!";
+                          //     return Response::json($response);  
+                           
+                      }
+                      else{
                         $input['is_verified'] = 2;
                         $input['otp'] = '';
 
@@ -482,6 +509,10 @@ class AuthController extends Controller
                         $response['success'] = true;
                         $response['message'] = 'Mobile Number Updated Successfully';
                         return $response;
+
+                      }
+
+                        
                  
                         // return response()->json(['status'=>1,'message' =>'Verification successfully.','result' => $chkmob],200);
                     }
