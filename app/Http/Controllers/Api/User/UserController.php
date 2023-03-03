@@ -1025,7 +1025,9 @@ class UserController extends Controller
          $cc_email = array();
          // dd($decrypted['email']);
          $rand = rand(100000,999999);
-         $res = DB::table('reset_otps')->insert(['email' => $decrypted['email'],'otp' => $rand,'status' => 1]);
+         $res = User::where('email',$decrypted['email'])->update(['remember_token'=>$rand,'otp_expires_time'=>$dtime]);
+
+         // $res = DB::table('reset_otps')->insert(['email' => $decrypted['email'],'otp' => $rand,'status' => 1]);
          
          // echo "<pre>";print_r($data);exit();
 

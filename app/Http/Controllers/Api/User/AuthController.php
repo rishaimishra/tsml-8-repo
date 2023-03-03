@@ -135,7 +135,7 @@ class AuthController extends Controller
                     $otp = random_int(100000, 999999); 
                     $inputotp['login_otp'] = $otp;
 
-                    $datestime = date("Y-m-d H:m:s");
+                    $datestime = date("Y-m-d H:i:s");
                     $endTime = strtotime("+3 minutes", strtotime($datestime));
                     $dtime =  date('Y-m-d h:i:s', $endTime);
                     // dd($datestime,$dtime);
@@ -710,9 +710,16 @@ class AuthController extends Controller
             return Response::json($response); 
         }
         
+        $datestime = date("Y-m-d H:i:s");
+        $endTime = strtotime("+3 minutes", strtotime($datestime));
+        $dtime =  date('Y-m-d h:i:s', $endTime);
+        // dd($datestime,$dtime);
+
+         
+         
         $vcode = random_int(100000, 999999); 
         
-        User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode]);
+        User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode,'otp_expires_time'=>$dtime]);
         // $data['OTP'] =  $vcode;
         // $data['name'] = $user->name;
         // $data['email'] = $user->email;
@@ -775,7 +782,26 @@ class AuthController extends Controller
              
         }
         else{
-            if($decrypted['password'] == $decrypted['password_confirm'] && $decrypted['password']){
+
+            $userdata = User::where('id',$chkOtp->id)->first();
+
+
+              $datetime_1 = $userdata->otp_expires_time;
+              $datetime_2 = date("Y-m-d H:i:s");
+
+              // dd($datetime_1,$datetime_2);
+
+              $from_time = strtotime($datetime_1);
+              $to_time = strtotime($datetime_2);
+              $diff_minutes = round(abs($from_time - $to_time) / 60,2);
+              if ($diff_minutes>3) {
+                $response['error']['message'] = "OTP expired !!";
+                    return Response::json($response);  
+                 
+              }
+              else{
+
+                if($decrypted['password'] == $decrypted['password_confirm'] && $decrypted['password']){
                  // dd($request->password);
                 $remember_token = $decrypted['otp']; 
                 $update['password'] = Hash::make($decrypted['password']);
@@ -789,10 +815,14 @@ class AuthController extends Controller
                     $response['error']['message'] = "Somthing went be wrong";
                     return Response::json($response); 
                 }
-            } else {
-                $response['error']['message'] = "Password and Confirm Password not matched";
-                return Response::json($response);  
-            } 
+                } else {
+                    $response['error']['message'] = "Password and Confirm Password not matched";
+                    return Response::json($response);  
+                }
+
+              }
+
+             
         }
 
         
