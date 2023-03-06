@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api\Modules\Dorder;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\DeliveryOrders;
- use App\Models\ProductSubCategory;
+use App\Models\Models\DeliveryOrders;
+ use App\Models\Models\ProductSubCategory;
 use JWTAuth;
 use Validator;
 use File; 
@@ -225,12 +225,21 @@ class DoController extends Controller
 
           try{ 
                
-            $res = DB::table('sales_orders')
-               ->leftjoin('orders','sales_orders.po_no','orders.po_no')
+            // $res = DB::table('sales_orders')
+            //    ->leftjoin('orders','sales_orders.po_no','orders.po_no')
+            //    ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
+            //    ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
+            //    ->leftjoin('sub_categorys','quote_schedules.sub_cat_id','sub_categorys.id')
+            //    ->where('sales_orders.so_no',$so_no)->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
+            //    ->select('sub_categorys.id','sub_categorys.sub_cat_name')->get();
+            
+            $dodata = DB::table('sc_excel_datas')->where('ordr_no',$so_no)->select('Cust_Referance')->first();
+
+            $res = DB::table('orders')
                ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
                ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
                ->leftjoin('sub_categorys','quote_schedules.sub_cat_id','sub_categorys.id')
-               ->where('sales_orders.so_no',$so_no)->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
+               ->where('orders.cus_po_no',$dodata->Cust_Referance)->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
                ->select('sub_categorys.id','sub_categorys.sub_cat_name')->get();
                
                    // echo "<pre>";print_r($newcount);exit();
@@ -265,19 +274,22 @@ class DoController extends Controller
               ->leftjoin('users','sales_orders.user_id','users.id')
                // ->where('orders.po_no',$po_no)->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
               ->where('delivery_orders.plant_id',$id)
-               ->select('sales_orders.so_no','sales_orders.created_at','delivery_orders.do_no','delivery_orders.do_quantity','delivery_orders.created_at as do_date','users.name','sales_contracts.qty_cont','delivery_orders.id as do_id')
+               ->select('sales_orders.so_no','sales_orders.created_at','delivery_orders.do_no','delivery_orders.do_quantity','delivery_orders.created_at as do_date','users.name','sales_contracts.qty_cont','delivery_orders.id as do_id','delivery_orders.so_no as do_so_no')
                ->get();
 
                foreach ($res as $key => $value) {
                   
+                  $res = DB::table('sc_excel_datas')->where('ordr_no',$value->do_so_no)->first();
+                  $getdata = $this->newscnoget($res->Cust_Referance);
+
                   $arra[$key]['do_id'] = $value->do_id;
-                  $arra[$key]['so_no'] = $value->so_no;
+                  $arra[$key]['so_no'] = $value->do_so_no;
                   $arra[$key]['do_no'] = $value->do_no;
                   $arra[$key]['do_quantity'] = $value->do_quantity;
                   $arra[$key]['so_date'] = date('d-m-Y',strtotime($value->created_at));
                   $arra[$key]['do_date'] = date('d-m-Y',strtotime($value->do_date));
-                  $arra[$key]['qty_cont'] = $value->qty_cont;
-                  $arra[$key]['cus_name'] = $value->name;
+                  $arra[$key]['qty_cont'] = $res->QtyContractTSML;
+                  $arra[$key]['cus_name'] = $getdata['org_name'];
                   
                }
                
@@ -302,17 +314,21 @@ class DoController extends Controller
         // dd('ok');
           try{ 
                
-            $res = DB::table('sales_orders')
-              // ->leftjoin('sales_orders','delivery_orders.so_no','sales_orders.so_no')
-               ->leftjoin('sales_contracts','sales_orders.transact_id','sales_contracts.id')
-               // ->leftjoin('sub_categorys','quote_schedules.sub_cat_id','sub_categorys.id')
-              // ->leftjoin('users','sales_orders.user_id','users.id')
-               // ->where('orders.po_no',$po_no)->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
-              ->where('sales_orders.so_no',$request->so_no)
-               ->select('sales_orders.so_no','sales_contracts.qty_cont')
-               ->first();
-               $doQuenty = $res->qty_cont;
-                
+            // $res = DB::table('sales_orders')
+            //   // ->leftjoin('sales_orders','delivery_orders.so_no','sales_orders.so_no')
+            //    ->leftjoin('sales_contracts','sales_orders.transact_id','sales_contracts.id')
+            //    // ->leftjoin('sub_categorys','quote_schedules.sub_cat_id','sub_categorys.id')
+            //   // ->leftjoin('users','sales_orders.user_id','users.id')
+            //    // ->where('orders.po_no',$po_no)->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
+            //   ->where('sales_orders.so_no',$request->so_no)
+            //    ->select('sales_orders.so_no','sales_contracts.qty_cont')
+            //    ->first();
+            //    $doQuenty = $res->qty_cont;
+              
+
+              $res = DB::table('sc_excel_datas')->where('ordr_no',$request->so_no)
+              ->select('Cust_Referance','id','ordr_no','sc_no','QtyContractTSML')->first();
+              $doQuenty = $res->QtyContractTSML;
                // dd($doQuenty);
                // dd($request->do_quantity);
 
@@ -514,21 +530,26 @@ class DoController extends Controller
     {
         try{ 
                $arra = array();
-               $res = DB::table('sales_orders')->leftjoin('orders','sales_orders.po_no','orders.po_no')->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
-               ->whereNull('quotes.deleted_at')->groupBy('quotes.rfq_no')
-               ->select('sales_orders.so_no','sales_orders.co_no','orders.rfq_no','orders.po_no','quotes.user_id as cus_id')
-               ->get();
+               // $res = DB::table('sales_orders')->leftjoin('orders','sales_orders.po_no','orders.po_no')->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
+               // ->whereNull('quotes.deleted_at')->groupBy('quotes.rfq_no')
+               // ->select('sales_orders.so_no','sales_orders.co_no','orders.rfq_no','orders.po_no','quotes.user_id as cus_id')
+               // ->get();
+               $res = DB::table('sc_excel_datas')->select('Cust_Referance','id','ordr_no','sc_no')->get();
+
+
+               
                // echo "<pre>";print_r($res);exit();
                if(!empty($res))
                {
                foreach ($res as $key => $value) {
                   
-                 
-                  $arra[$key]['so_no'] = $value->so_no;
-                  $arra[$key]['co_no'] = $value->co_no;
-                  $arra[$key]['rfq_no'] = $value->rfq_no;
-                  $arra[$key]['po_no'] = $value->po_no;
-                  $arra[$key]['cus_id'] = $value->cus_id;
+                  $getscdata = $this->newscnoget($value->Cust_Referance);
+                  // dd($getscdata['rfq_no']);
+                  $arra[$key]['so_no'] = $value->ordr_no;
+                  $arra[$key]['co_no'] = $value->sc_no;
+                  $arra[$key]['rfq_no'] = $getscdata['rfq_no'];
+                  $arra[$key]['po_no'] = $getscdata['po_no'];
+                  $arra[$key]['cus_id'] = $getscdata['cus_id'];
       
                   
                }
@@ -544,5 +565,23 @@ class DoController extends Controller
 
          return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
        }
+    }
+
+    function newscnoget($cust_referance)
+    {
+         $res = DB::table('orders')->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
+               ->leftjoin('users','quotes.user_id','users.id')
+               ->whereNull('quotes.deleted_at')->groupBy('quotes.rfq_no')
+               ->where('orders.cus_po_no',$cust_referance)
+               ->select('orders.rfq_no','orders.po_no','quotes.user_id as cus_id','users.org_name')
+               ->first();
+
+         $data['rfq_no'] = $res->rfq_no;
+         $data['po_no'] = $res->po_no;
+         $data['cus_id'] = $res->cus_id;
+         $data['org_name'] = $res->org_name;
+
+         return $data;
+
     }
 }
