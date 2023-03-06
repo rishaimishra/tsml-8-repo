@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use App\Models\OtpVerification;
+use App\Models\Models\OtpVerification;
 use App\Mail\Register;
 use App\Models\User;
 use App\Jobs\UserCreated;
@@ -107,6 +107,7 @@ class UserController extends Controller
 
         $decrypted = CryptoJsAes::decrypt($encrypted, $password);
 
+        // dd($decrypted);
 
         $validator = Validator::make($decrypted, [ 
             'mobile_no' =>'required|digits:10',
@@ -139,11 +140,18 @@ class UserController extends Controller
             }
             else
             {
+                $datestime = date("Y-m-d H:i:s");
+                $endTime = strtotime("+3 minutes", strtotime($datestime));
+                $dtime =  date('Y-m-d h:i:s', $endTime);
+
                 $otp = random_int(100000, 999999); 
 
                 $input['mob_number'] = $decrypted['mobile_no'];
                 $input['email'] = $decrypted['email'];
                 $input['otp'] = $otp;
+                $input['mobotp_expires_time'] = $dtime;
+
+                // dd($input);
 
                 $categoryData = OtpVerification::create($input);  
 
@@ -218,6 +226,28 @@ class UserController extends Controller
                 {
                     if ($chkmob->otp == $decrypted['otp']) 
                     {
+                        
+                       
+                      // dd(date("Y-m-d H:i:s"));
+
+                        $datetime_1 = $chkmob->mobotp_expires_time;
+                        $datetime_2 = date("Y-m-d H:i:s");
+                        // dd($datetime_1,$datetime_2);
+                        $from_time = strtotime($datetime_1);
+                        $to_time = strtotime($datetime_2);
+                        // dd($from_time,$to_time);
+                        $diff_minutes = round(abs($from_time - $to_time) / 60,2);
+                        // dd($diff_minutes);
+                        // dd($datetime_1,$datetime_2,$diff_minutes);
+
+                        if ($diff_minutes>3) 
+                        {
+                            return response()->json(['status'=>0,'message' => array('OTP expired !!')]); 
+                           
+                        }
+                        else
+                        {
+
                         $input['is_verified'] = 2;
                         $input['otp'] = '';
                         $userd['email'] = $decrypted['email'];
@@ -226,6 +256,7 @@ class UserController extends Controller
                         
                         $encrypt = CryptoJsAes::encrypt($userd, $password);
                         return response()->json(['status'=>1,'message' =>'Verification successfully.','result' => $encrypt],200);
+                        }
                     }
                     else
                     {

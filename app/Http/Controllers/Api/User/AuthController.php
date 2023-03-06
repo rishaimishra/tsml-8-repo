@@ -372,8 +372,14 @@ class AuthController extends Controller
 
     public function updateMobileNUmber(Request $request)
     {
+      $encrypted = json_encode($request->all());
+        // $json = json_encode($encrypted1);
+      $password = "123456";
+
+      $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+
       // dd($request->all());
-      $validator = Validator::make($request->all(), [
+      $validator = Validator::make($decrypted, [
           'mobile_no'=>'required|digits:10',
       ]);
       
@@ -381,14 +387,14 @@ class AuthController extends Controller
           return response()->json($validator->errors());
       }
 
-      $chkmob = OtpVerification::where('email',$request->email)->where('mob_number',$request->mobile_no)->first(); 
+      $chkmob = OtpVerification::where('email',$decrypted['email'])->where('mob_number',$decrypted['mobile_no'])->first(); 
 
         // dd($chkmob);
         if ($chkmob!=null) {
          if(!empty($chkmob->otp) && $chkmob->is_verified == 1)
           {
             // dd('OTP already send to this email addess.');
-              return response()->json(['status'=>0,'message' => 'OTP already sent to this email addess.'.$request->email]); 
+              return response()->json(['status'=>0,'message' => 'OTP already sent to this email addess.'.$decrypted['email']]); 
           }
           else if(empty($chkmob->otp) && $chkmob->is_verified == 2)
           {
@@ -399,8 +405,8 @@ class AuthController extends Controller
         else
         { 
           // dd('mail send');
-              $user_email = User::where('email',$request->email)->first();
-              $chkuser = User::where('phone',$request->mobile_no)->where('id','!=',$user_email->id)->get()->toArray();
+              $user_email = User::where('email',$decrypted['email'])->first();
+              $chkuser = User::where('phone',$decrypted['mobile_no'])->where('id','!=',$user_email->id)->get()->toArray();
               // dd($chkuser);
               if(!empty($chkuser))
               {
@@ -418,8 +424,8 @@ class AuthController extends Controller
 
               $otp = random_int(100000, 999999);
 
-              $input['mob_number'] = $request->mobile_no;
-              $input['email'] = $request->email;
+              $input['mob_number'] = $decrypted['mobile_no'];
+              $input['email'] = $decrypted['email'];
               $input['otp'] = $otp;
               $input['mobotp_expires_time'] = $dtime;
 
@@ -429,14 +435,18 @@ class AuthController extends Controller
               $html = 'mail.Otpverificationmail';
               $data['otp'] = $otp;
               $cc_email = "";
-              $email = $request->email;
+              $email = $decrypted['email'];
 
               (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email); 
      
-              $msg = "OTP has been sent to this email address ".$request->email." successfully.";
-              $userdata['mob_number'] = $request->mobile_no;
-              $userdata['email'] = $request->email;
-              return response()->json(['status'=>1,'message' =>$msg,'result' =>$userdata],200);
+              $msg = "OTP has been sent to this email address ".$decrypted['email']." successfully.";
+              $userdata['mob_number'] = $decrypted['mobile_no'];
+              $userdata['email'] = $decrypted['email'];
+
+              $password = "123456";
+              $encrypted = CryptoJsAes::encrypt($userdata, $password);
+
+              return response()->json(['status'=>1,'message' =>$msg,'result' =>$encrypted],200);
                 
             }
             
@@ -450,7 +460,14 @@ class AuthController extends Controller
       */
       public function verifyMobileOtpUser(Request $request)
       {
-        $validator = Validator::make($request->all(), [ 
+
+        $encrypted = json_encode($request->all());
+        // $json = json_encode($encrypted1);
+        $password = "123456";
+
+        $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+
+        $validator = Validator::make($decrypted, [ 
             'mobile_no' =>'required|digits:10',
             // 'email' =>'required|email',
             'email' => ['required', 'string','max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/'], 
@@ -466,7 +483,7 @@ class AuthController extends Controller
             $response['error']['validation'] = $validator->errors();
             return Response::json($response);
         }
-        $chkmob = OtpVerification::where('email',$request->email)->where('mob_number',$request->mobile_no)->first();
+        $chkmob = OtpVerification::where('email',$decrypted['email'])->where('mob_number',$decrypted['mobile_no'])->first();
         // dd($chkmob);
         if (!empty($chkmob)) 
         {
@@ -478,7 +495,7 @@ class AuthController extends Controller
             {
                 if(!empty($chkmob->otp) && $chkmob->is_verified != 2)
                 {
-                    if ($chkmob->otp == $request->otp) 
+                    if ($chkmob->otp == $decrypted['otp']) 
                     {
 
                       
@@ -503,9 +520,9 @@ class AuthController extends Controller
                         $input['is_verified'] = 2;
                         $input['otp'] = '';
 
-                        $categoryData = OtpVerification::where('mob_number',$request->mobile_no)->where('otp',$chkmob->otp)->update($input); 
+                        $categoryData = OtpVerification::where('mob_number',$decrypted['mobile_no'])->where('otp',$chkmob->otp)->update($input); 
 
-                        User::where('email',$request->email)->update(['phone'=>$request->mobile_no]);
+                        User::where('email',$request->email)->update(['phone'=>$decrypted['mobile_no']]);
                         $response['success'] = true;
                         $response['message'] = 'Mobile Number Updated Successfully';
                         return $response;
@@ -524,7 +541,7 @@ class AuthController extends Controller
                 }
                 else
                 {
-                    return response()->json(['status'=>0,'message' => array('OTP already sent to this mobile number '.$request->mobile_no)]);
+                    return response()->json(['status'=>0,'message' => array('OTP already sent to this mobile number '.$decrypted['mobile_no'])]);
                 }
 
             }
