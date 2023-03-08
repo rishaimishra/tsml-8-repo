@@ -268,14 +268,16 @@ class QuoteEmailController extends Controller
          $plants = DB::table('plants')->leftjoin('users','plants.name','users.org_name')
          ->where('plants.code',$value)->select('users.email')->get();
          // dd($plants->email);
-
+       if(!empty($plants))
+       {
          foreach ($plants as $key => $val) {
               // dd($val->email);
               array_push($to_email,$val->email);
          }
      }
+     }
         // dd($to_email);
-         $sub = 'SC and SO number has been updated for the rfq'.'   '.$rfq_no;
+         $sub = 'SC and SO number has been updated';
  
          $html = 'mail.douploadmail';
 
@@ -286,9 +288,11 @@ class QuoteEmailController extends Controller
       //    $data['rfq_no'] = $rfq_no;
       //    $data['cc'] = $cc_email;
          // echo "<pre>";print_r($data);exit();
+         if(!empty($to_email)){
          foreach ($to_email as $k => $v) {
              (new MailService)->dotestMail($sub,$html,$v,$data,$cc_email);
          }
+     }
         
          // Mail::send(new RfqGeneratedMail($data));
 
