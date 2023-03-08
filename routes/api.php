@@ -113,6 +113,8 @@ Route::post('sale_accpt_mail', [QuoteEmailController::class,'saleAccptMail']);
 Route::post('accepted_price_mail', [QuoteEmailController::class,'acceptedPriceMail']);
 Route::post('order_cnrfm_mail', [QuoteEmailController::class,'orderCnrfmMail']);
 Route::post('sale_head_accpt_mail', [QuoteEmailController::class,'saleHeadAccptMail']);
+Route::post('sale_head_accpt_mail', [QuoteEmailController::class,'saleHeadAccptMail']);
+Route::post('pant_do_mail', [QuoteEmailController::class,'pantDomail']);
 
 // ------------ sap mails------------------------------------------
 Route::post('sc_mail', [QuoteEmailController::class,'scMail']);

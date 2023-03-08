@@ -248,6 +248,55 @@ class QuoteEmailController extends Controller
          return response()->json(['status'=>1,'message' =>$msg],200);
     }
     // -----------------------------------------------------------------------------
+    
+    // ------------------------- create do mail to plants --------------------------
+    public function pantDomail(Request $request)
+    {
+
+
+         $cc_email = array();
+         $to_email = array();
+
+         $plants = $request->input('plants');
+         $rfq_no = $request->input('rfq_no');
+         $so_no = $request->input('so_no');
+         
+         // echo "<pre>";print_r($plants);exit();
+         // $user = User::where('id',$user_id)->first();
+         foreach ($plants as $key => $value) {
+          // dd($value);
+         $plants = DB::table('plants')->leftjoin('users','plants.name','users.org_name')
+         ->where('plants.code',$value)->select('users.email')->get();
+         // dd($plants->email);
+
+         foreach ($plants as $key => $val) {
+              // dd($val->email);
+              array_push($to_email,$val->email);
+         }
+     }
+        // dd($to_email);
+         $sub = 'SC and SO number has been updated for the rfq'.'   '.$rfq_no;
+ 
+         $html = 'mail.douploadmail';
+
+         $data = $so_no;
+
+         // $data['name'] = $user['name'];
+      //    $data['email'] = $user['email'];
+      //    $data['rfq_no'] = $rfq_no;
+      //    $data['cc'] = $cc_email;
+         // echo "<pre>";print_r($data);exit();
+         foreach ($to_email as $k => $v) {
+             (new MailService)->dotestMail($sub,$html,$v,$data,$cc_email);
+         }
+        
+         // Mail::send(new RfqGeneratedMail($data));
+
+         $msg = "Mail sent successfully";
+         return response()->json(['status'=>1,'message' =>$msg],200);
+    }
+
+    // -----------------------------------------------------------------------------
 
 
 }
