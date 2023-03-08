@@ -543,7 +543,8 @@ class NotificationController extends Controller
 
 		         $res = PlantNotification::where('plant_id',$id)->where('status',1)->with('userName')->orderBy('id','desc')->get();
 		         
-
+                 if(!empty($res))
+                 {
 		         foreach ($res as $key => $value) {
 		         	 
 		         	 $data[$key]['id'] = $value->id;
@@ -555,6 +556,7 @@ class NotificationController extends Controller
 			    	 
 			    	 
 		         }
+		     }
 		         
 
 		    	 // echo "<pre>";print_r($res);exit();
