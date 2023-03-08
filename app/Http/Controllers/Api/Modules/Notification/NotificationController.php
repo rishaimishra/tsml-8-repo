@@ -495,18 +495,16 @@ class NotificationController extends Controller
                  // dd($request->all());
                  // $data = array();
 		    	
-		         $res = DB::table('quotes')->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')->leftjoin('users','quote_schedules.plant','users.org_name')->where('quotes.rfq_no',$request->input('rfq_no'))
-		         ->whereNull('quotes.deleted_at')
+		         $res = DB::table('plants')->leftjoin('users','plants.name','users.org_name')->where('plants.code',$request->input('plant'))
 		         ->select('users.id')->get();
 		         // echo "<pre>";print_r($value->id);exit();
                
-                foreach ($res as $key => $value) {
-                	 // echo "<pre>";print_r($value->id);exit();
-                	if(!empty($value->id))
-                	{
+                   foreach ($res as $key => $value) {
+                   	# code...
+                   
 	                 $data['desc'] = $request->input('desc');
 			    	 $data['desc_no'] = $request->input('desc_no');
-			    	 $data['sender_id'] = $request->input('user_id');
+			    	 $data['sender_id'] = 1;
 			    	 $data['plant_id'] = $value->id;
 			    	 $data['url_type'] = "";
 			    	 $data['status'] = 1;
@@ -514,7 +512,8 @@ class NotificationController extends Controller
 
 			    	 PlantNotification::create($data);
 			    	}
-                }
+			    	
+                
 
 		    	 
 
