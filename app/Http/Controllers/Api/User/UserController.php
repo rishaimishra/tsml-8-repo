@@ -141,15 +141,15 @@ class UserController extends Controller
             else
             {
                 $datestime = date("Y-m-d H:i:s");
-                $endTime = strtotime("+3 minutes", strtotime($datestime));
-                $dtime =  date('Y-m-d h:i:s', $endTime);
+                // $endTime = strtotime("+3 minutes", strtotime($datestime));
+                // $dtime =  date('Y-m-d h:i:s', $endTime);
 
                 $otp = random_int(100000, 999999); 
 
                 $input['mob_number'] = $decrypted['mobile_no'];
                 $input['email'] = $decrypted['email'];
                 $input['otp'] = $otp;
-                $input['mobotp_expires_time'] = $dtime;
+                $input['mobotp_expires_time'] = $datestime;
 
                 // dd($input);
 
@@ -1081,12 +1081,12 @@ class UserController extends Controller
         $cc_email = array();
          // dd($decrypted['email']);
         $datestime = date("Y-m-d H:i:s");
-        $endTime = strtotime("+3 minutes", strtotime($datestime));
-        $dtime =  date('Y-m-d h:i:s', $endTime);
+        // $endTime = strtotime("+3 minutes", strtotime($datestime));
+        // $dtime =  date('Y-m-d h:i:s', $endTime);
 
         $rand = rand(100000,999999);
 
-         $res = User::where('email',$decrypted['email'])->update(['remember_token'=>$rand,'otp_expires_time'=>$dtime]);
+         $res = User::where('email',$decrypted['email'])->update(['remember_token'=>$rand,'otp_expires_time'=>$datestime]);
 
          // $res = DB::table('reset_otps')->insert(['email' => $decrypted['email'],'otp' => $rand,'status' => 1]);
          

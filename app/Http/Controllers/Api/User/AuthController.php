@@ -136,12 +136,12 @@ class AuthController extends Controller
                     $inputotp['login_otp'] = $otp;
 
                     $datestime = date("Y-m-d H:i:s");
-                    $endTime = strtotime("+3 minutes", strtotime($datestime));
-                    $dtime =  date('Y-m-d h:i:s', $endTime);
+                    // $endTime = strtotime("+3 minutes", strtotime($datestime));
+                    // $dtime =  date('Y-m-d h:i:s', $endTime);
                     // dd($datestime,$dtime);
 
                      
-                    $inputotp['otp_expires_time'] = $dtime; 
+                    $inputotp['otp_expires_time'] =$datestime; 
                     $categoryData = User::where('email',$decrypted['email'])->update($inputotp); 
                     $sub = "OTP For Login";
                     $html = 'mail.Otpverificationmail';
@@ -299,25 +299,29 @@ class AuthController extends Controller
           // dd($decrypted);
             if (Auth::user()->login_otp == $decrypted['logotp']) {
               // dd('ok to login');
-              $userdata = User::where('id',Auth::user()->id)->first();
-
+              $userdata = User::where('id',Auth::user()->id)->first(); 
 
               $datetime_1 = $userdata->otp_expires_time;
               $datetime_2 = date("Y-m-d H:i:s");
 
               // dd($datetime_1,$datetime_2);
 
-              $from_time = strtotime($datetime_1);
-              $to_time = strtotime($datetime_2);
-              $diff_minutes = round(abs($from_time - $to_time) / 60,2);
+              $to = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $datetime_1);
+              $from = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $datetime_2); 
+              $diff_in_minutes = $to->diffInMinutes($from);
               
-              // dd($datetime_1,$datetime_2,$diff_minutes);
 
-              if ($diff_minutes>3) 
+              // $from_time = strtotime($datetime_1);
+              // $to_time = strtotime($datetime_2);
+              // $diff_minutes = round(abs($from_time - $to_time) / 60,2);
+              
+              // dd($datetime_1,$datetime_2,$diff_minutes,$diff_in_minutes);
+              if ($diff_in_minutes>3) 
               {
                return response()->json(['success' => false,'message' => 'OTP expired !!']);
               }
               else{
+              
                 $userArr['user_id'] = $userdata->id;
                 $userArr['user_name'] = $userdata->org_name;
                 $userArr['user_type'] = $userdata->user_type;
@@ -332,7 +336,7 @@ class AuthController extends Controller
                     'login_attempt' => Auth::user()->login_attempt,
                     'token' => $jwt_token,
                 ]);
-              } 
+              }
               
             }
             else{
@@ -419,15 +423,15 @@ class AuthController extends Controller
                
 
               $datestime = date("Y-m-d H:i:s");
-              $endTime = strtotime("+3 minutes", strtotime($datestime));
-              $dtime =  date('Y-m-d h:i:s', $endTime);
+              // $endTime = strtotime("+3 minutes", strtotime($datestime));
+              // $dtime =  date('Y-m-d h:i:s', $endTime);
 
               $otp = random_int(100000, 999999);
 
               $input['mob_number'] = $decrypted['mobile_no'];
               $input['email'] = $decrypted['email'];
               $input['otp'] = $otp;
-              $input['mobotp_expires_time'] = $dtime;
+              $input['mobotp_expires_time'] = $datestime;
 
               $categoryData = OtpVerification::create($input);  
 
@@ -759,15 +763,15 @@ class AuthController extends Controller
         }
         
         $datestime = date("Y-m-d H:i:s");
-        $endTime = strtotime("+3 minutes", strtotime($datestime));
-        $dtime =  date('Y-m-d h:i:s', $endTime);
+        // $endTime = strtotime("+3 minutes", strtotime($datestime));
+        // $dtime =  date('Y-m-d h:i:s', $endTime);
         // dd($datestime,$dtime);
 
          
          
         $vcode = random_int(100000, 999999); 
         
-        User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode,'otp_expires_time'=>$dtime]);
+        User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode,'otp_expires_time'=>$datestime]);
         // $data['OTP'] =  $vcode;
         // $data['name'] = $user->name;
         // $data['email'] = $user->email;
