@@ -609,7 +609,7 @@ class PriceManagementController extends Controller
     public function getCategoryList($proId)
     {
       try{         
-            $data = Category::where('product_id',$proId)->orderBy('id','desc')->get();
+            $data = Category::where('product_id',$proId)->where('status','=',1)->orderBy('id','desc')->get();
 
             if(count($data)>0)
             {
@@ -647,7 +647,7 @@ class PriceManagementController extends Controller
     public function getSubCategoryList($cateId)
     {
       try{         
-            $data = ProductSubCategory::where('cat_id',$cateId)->orderBy('id','desc')->get();
+            $data = ProductSubCategory::where('cat_id',$cateId)->where('status','=',1)->orderBy('id','desc')->get();
 
             // dd($data);
 

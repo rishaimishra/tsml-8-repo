@@ -501,7 +501,7 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
 
       Route::get('get-product-list',[PriceManagementController::class,'getProductList'])->name('get_store_pro_price');
 
-      Route::post('get-category-list/{proId}',[PriceManagementController::class,'getCategoryList']);
+      Route::get('get-category-list/{proId}',[PriceManagementController::class,'getCategoryList']);
 
       Route::get('get-sub-category-list/{cateId}',[PriceManagementController::class,'getSubCategoryList']);
 
