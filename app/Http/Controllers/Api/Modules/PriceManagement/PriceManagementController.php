@@ -411,7 +411,7 @@ class PriceManagementController extends Controller
           'misc_expense'     => 'required', 
           'interest_rate'        => 'required', 
           'cam_discount'     => 'required',
-          'gst_per'     => 'required', 
+            
         ]);
 
         if ($validator->fails()) { 

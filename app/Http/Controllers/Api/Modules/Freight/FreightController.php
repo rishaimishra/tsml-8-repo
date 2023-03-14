@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Freights;
+use App\Models\Models\Freights;
 use JWTAuth;
 use Validator;
 use DB;
