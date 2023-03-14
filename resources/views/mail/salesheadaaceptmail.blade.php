@@ -28,20 +28,20 @@
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Dear Madam/Sir,</p>
-                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Greetings from tatasteelmining.com!</p>
+                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Greetings from tatasteelmining</p>
             </td>
         </tr>
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; line-height: 1.8; color: rgba(0,0,0,.8);">Congratulations! Our sales team has quoted the price, volume and delivery timeline against your RFQ. Please confirm the final quotation and upload your PO so that the order can be processed by our sales team.
-                You may check the details <a href="https://esales.tatasteelmining.com/">here.</a></p>
+                 </p>
                
             </td>
         </tr>
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Thank You,</p>
-                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Team-tatasteelmining.com</p>
+                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Team-tatasteelmining</p>
             </td>
         </tr>
         <tr>

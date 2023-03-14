@@ -24,23 +24,14 @@
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Dear Madam/Sir,</p>
-                <!-- <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Greetings from tatasteelmining.com!</p> -->
+                
             </td>
         </tr>
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; line-height: 1.8; color: rgba(0,0,0,.8);">Cam send a complaint details for this customer <b>{{@$data['customer_name']}}</b> which complaint category is <b>{{@$data['com_cate_name']}}</b> and complaint sub category is <b>{{@$data['com_sub_cate_name']}}</b>, against the PO number ({{@$data['po_number']}}). Please find the below communication. </p>
                 
-               <!--  @foreach($data['remarksData'] as $reshow)
-                    @if($reshow->customer_remarks)
-                    <p>Customer's Remarks! :- {{$reshow['customer_remarks']}}, {{date('d-m-Y', strtotime($reshow['created_at']))}}</p>
-                    @endif
-                    @if($reshow->kam_remarks)
-                    <p>Cam's Remarks! :-  {{$reshow['kam_remarks']}}, {{date('d-m-Y', strtotime($reshow['created_at']))}}</p>
-                    @endif
-                     
-                @endforeach -->
-                <!-- <p style="font-weight: 400; font-size: 15px; line-height: 1.8; color: rgba(0,0,0,.8);">It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p> -->
+              
             </td>
         </tr>
         <tr>
@@ -73,7 +64,7 @@
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Thank You,</p>
-                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Team-tatasteelmining.com</p>
+                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Team-tatasteelmining</p>
             </td>
         </tr>
         <tr>

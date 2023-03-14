@@ -28,19 +28,19 @@
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Dear Madam/Sir,</p>
-                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Greetings from tatasteelmining.com!</p>
+                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Greetings from tatasteelmining</p>
             </td>
         </tr>
         <tr>
             <td style="padding: 0 15px;">
-                <p style="font-weight: 400; font-size: 15px; line-height: 1.8; color: rgba(0,0,0,.8);">Thank you for registering in the eSales Portal of Tata Steel Mining. You may check <a href="https://esales.tatasteelmining.com/">here.</a></p>
+                <p style="font-weight: 400; font-size: 15px; line-height: 1.8; color: rgba(0,0,0,.8);">Thank you for registering in the eSales Portal of Tata Steel Mining. You may check </p>
                
             </td>
         </tr>
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Thank You,</p>
-                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Team-tatasteelmining.com</p>
+                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Team-tatasteelmining</p>
             </td>
         </tr>
         <tr>

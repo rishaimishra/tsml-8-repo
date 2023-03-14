@@ -28,19 +28,19 @@
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Dear Madam/Sir,</p>
-                <!-- <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Greetings from tatasteelmining.com!</p> -->
+                
             </td>
         </tr>
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; line-height: 1.8; color: rgba(0,0,0,.8);">{{@$data['kam_remarks']}} </p>
-                <!-- <p style="font-weight: 400; font-size: 15px; line-height: 1.8; color: rgba(0,0,0,.8);">It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p> -->
+                
             </td>
         </tr>
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Thank You,</p>
-                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Team-tatasteelmining.com</p>
+                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Team-tatasteelmining</p>
             </td>
         </tr>
         <tr>

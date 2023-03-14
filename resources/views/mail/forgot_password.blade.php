@@ -28,7 +28,7 @@
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Dear Madam/Sir,</p>
-                <!-- <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Greetings from tatasteelmining.com!</p> -->
+                
             </td>
         </tr>
         <tr>
@@ -41,17 +41,15 @@
                </div>
                <p style="font-family:Arial; font-size:14px; font-weight:500; color:#000;margin-left: 5px;">
                   If you did not make this request, just ignore this email.Otherwise please click the link above to reset your password 
-                  <!-- <a href="http://localhost:4200/#/auth/forget-password">Reset password !!</a>  -->
-                  <a href="https://beas.in/tsml/#/auth/forget-password">Reset password !!</a>
-                   <!-- <a href="https://demo-tsml.mjunction.in/mj-front/#/forget-password">Reset password !!</a>  -->
+                  
                </p>
-                <!-- <p style="font-weight: 400; font-size: 15px; line-height: 1.8; color: rgba(0,0,0,.8);">It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p> -->
+                
             </td>
         </tr>
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Thank You,</p>
-                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Team-tatasteelmining.com</p>
+                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Team-tatasteelmining</p>
             </td>
         </tr>
         <tr>
