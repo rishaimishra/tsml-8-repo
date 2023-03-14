@@ -142,7 +142,7 @@ class PriceManagementController extends Controller
           'Misc_Expense'     => 'required', 
           'Interest_Rate'        => 'required', 
           'CAM_Discount'     => 'required',
-          'gst_per'     => 'required',  
+           
         ]);
 
 
@@ -217,6 +217,7 @@ class PriceManagementController extends Controller
                 )
             ->where('products.pro_name','LIKE',"%{$request->product_name}%") 
             ->where('price_calculation.status',$request->status) 
+            ->orderBy('price_calculation.id','DESC')
             ->get();        
           }
           else if($request->product_name)
@@ -241,6 +242,7 @@ class PriceManagementController extends Controller
                         'sub_categorys.sub_cat_name as sub_category_name',
                     )
                 ->where('products.pro_name','LIKE',"%{$request->product_name}%") 
+                ->orderBy('price_calculation.id','DESC')
                 ->get(); 
 
           }
@@ -267,6 +269,7 @@ class PriceManagementController extends Controller
                         'sub_categorys.sub_cat_name as sub_category_name',
                     )
                 ->where('price_calculation.status',$request->status) 
+                ->orderBy('price_calculation.id','DESC')
                 ->get(); 
 
           }
@@ -291,6 +294,7 @@ class PriceManagementController extends Controller
                     'sub_categorys.id as sub_category_id',
                     'sub_categorys.sub_cat_name as sub_category_name',
                     )
+                ->orderBy('price_calculation.id','DESC')
                 ->get(); 
           }
             
