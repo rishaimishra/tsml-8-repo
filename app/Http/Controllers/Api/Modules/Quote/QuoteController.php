@@ -2565,7 +2565,7 @@ class QuoteController extends Controller
         }
         elseif($arr['approve_pending_from_sales'] == 1)
         {
-            $val = "Approve pending from Sales";
+            $val = "Approve pending from Sales Planning";
             // exit;
             return $val;
         }

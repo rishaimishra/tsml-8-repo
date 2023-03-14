@@ -43,6 +43,7 @@ use App\Http\Controllers\Api\Modules\Search\SearchController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\Modules\Security\SecurityQuestionController;
+use App\Http\Controllers\Api\Modules\Mis\MisController;
 
 use App\Http\Controllers\Api\Admin\AdminAuthController;
 use App\Http\Controllers\Api\Admin\AdminController;
@@ -146,7 +147,7 @@ Route::post('so-excel-submit',[SoTemporaryController::class,'SoExcelSubmit']);
 Route::get('so-excel-download/{contract_no?}',[SoTemporaryController::class,'SoExcelDownload']);
 // -----------------------------------------------------------------------------------------------
 
-Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmiddleware']],function ()
+Route::group(['prefix' => 'user'],function ()
 {
          Route::post('user-dashboard', [DashboardController::class,'userDashboard'])->name('user_dashboard');
 
@@ -294,7 +295,10 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
          Route::get('get_all_excelsc',[SalesContractController::class,'getallexcelsc']);
          Route::post('up_excelsc',[SalesContractController::class,'upexcelsc']);
 
-
+             // ------  mis sales excel ---------------------------
+         Route::get('mis_sales_excel',[MisController::class,'missalesplanorders']);
+         Route::get('mis_down_excel',[MisController::class,'misdownexcel']);
+             // ---------------------------------------------------
    		//------------------- Sap Routes --------------------------//
 
    		// Sap Contract Type Routes....
