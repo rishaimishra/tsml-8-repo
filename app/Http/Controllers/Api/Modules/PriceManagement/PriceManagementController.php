@@ -142,7 +142,7 @@ class PriceManagementController extends Controller
           'Misc_Expense'     => 'required', 
           'Interest_Rate'        => 'required', 
           'CAM_Discount'     => 'required',
-          'gst_per'     => 'required',  
+           
         ]);
 
 
