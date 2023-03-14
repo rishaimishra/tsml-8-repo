@@ -425,7 +425,7 @@ class PriceManagementController extends Controller
         // $input['user_id'] = $request->user_id;
         $input['BPT_Price'] = $request->bpt_price;
         $input['Price_Premium_sing'] = $request->Price_Premium_sing;
-        $input['Price_Premium'] = '-'.$request->price_premium;
+        $input['Price_Premium'] = $request->price_premium;
         $input['Misc_Expense'] = $request->misc_expense; 
         $input['Interest_Rate'] = $request->interest_rate;
         $input['CAM_Discount'] = $request->cam_discount;
