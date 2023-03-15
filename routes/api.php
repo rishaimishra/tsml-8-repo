@@ -509,7 +509,9 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
 
       Route::post('store-pro-price',[PriceManagementController::class,'manageProPrice']);
 
-      Route::get('get-threshold-price-admin',[PriceManagementController::class,'getThresholdPriceAdmin']);
+      Route::post('get-threshold-price-admin',[PriceManagementController::class,'getThresholdPriceAdmin']);
+
+      Route::post('export-excel-threshold-price-admin',[PriceManagementController::class,'exportExcelThresholdPriceAdmin']);
 
 
       Route::post('get-store-pro-price',[PriceManagementController::class,'getProPrice']);

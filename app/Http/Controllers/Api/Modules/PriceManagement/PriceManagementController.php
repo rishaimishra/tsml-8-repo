@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ThresholdExport;
 use App\Models\User;
 use App\Models\Models\Product;
 use App\Models\Models\Category;
@@ -194,8 +196,11 @@ class PriceManagementController extends Controller
     public function getThresholdPriceAdmin(Request $request)
     {
       try{ 
-          if($request->product_name && $request->status)
+          
+          // dd($getpro->pro_name);
+          if($request->pro_id && $request->status)
           {
+            $getpro = Product::where('id',$request->pro_id)->first();
             $data = DB::table('price_calculation')
             ->leftjoin('products','price_calculation.pro_id','products.id')
             ->leftjoin('categorys','price_calculation.cat_id','categorys.id')
@@ -215,13 +220,44 @@ class PriceManagementController extends Controller
                 'sub_categorys.id as sub_category_id',
                 'sub_categorys.sub_cat_name as sub_category_name',
                 )
-            ->where('products.pro_name','LIKE',"%{$request->product_name}%") 
+            ->where('products.pro_name','LIKE',"%{$getpro->pro_name}%") 
             ->where('price_calculation.status',$request->status) 
             ->orderBy('price_calculation.id','DESC')
             ->get();        
           }
-          else if($request->product_name)
+          if($request->pro_id && $request->catid && $request->status)
           {
+            // dd('ok');
+            $getpro = Product::where('id',$request->pro_id)->first();
+            $data = DB::table('price_calculation')
+            ->leftjoin('products','price_calculation.pro_id','products.id')
+            ->leftjoin('categorys','price_calculation.cat_id','categorys.id')
+            ->leftjoin('sub_categorys','price_calculation.sub_cat_id','sub_categorys.id')
+            ->select('price_calculation.id as threshold',
+                'price_calculation.size as size',
+                'price_calculation.BPT_Price as basic_price',
+                'price_calculation.Price_Premium as Price_Premium',
+                'price_calculation.Misc_Expense as Misc_Expense',
+                'price_calculation.Interest_Rate as Interest_Rate',
+                'price_calculation.CAM_Discount as CAM_Discount',
+                'price_calculation.status as status',
+                'products.id as product_id',
+                'products.pro_name as product_title',
+                'categorys.id as category_id',
+                'categorys.cat_name as category_name',
+                'sub_categorys.id as sub_category_id',
+                'sub_categorys.sub_cat_name as sub_category_name',
+                )
+            ->where('products.pro_name','LIKE',"%{$getpro->pro_name}%") 
+            ->where('price_calculation.status',$request->status) 
+            ->where('price_calculation.cat_id',$request->catid) 
+            ->where('price_calculation.sub_cat_id',$request->subcatid) 
+            ->orderBy('price_calculation.id','DESC')
+            ->get();        
+          }
+          else if($request->pro_id)
+          {
+            $getpro = Product::where('id',$request->pro_id)->first();
             $data = DB::table('price_calculation')
                 ->leftjoin('products','price_calculation.pro_id','products.id')
                 ->leftjoin('categorys','price_calculation.cat_id','categorys.id')
@@ -241,7 +277,7 @@ class PriceManagementController extends Controller
                         'sub_categorys.id as sub_category_id',
                         'sub_categorys.sub_cat_name as sub_category_name',
                     )
-                ->where('products.pro_name','LIKE',"%{$request->product_name}%") 
+                ->where('products.pro_name','LIKE',"%{$getpro->pro_name}%") 
                 ->orderBy('price_calculation.id','DESC')
                 ->get(); 
 
@@ -320,6 +356,91 @@ class PriceManagementController extends Controller
           \DB::rollback(); 
             return response()->json(['status'=>0,'message' =>config('global.failed_msg'),'result' => $e->getMessage()],config('global.failed_status'));
         }
+    }
+
+    /**
+     * This is for export excel threshold price admin . 
+     * @param  \App\Product  $product
+     * @return \Illuminate\Http\Response
+    */
+    public function exportExcelThresholdPriceAdmin(Request $request)
+    {
+      // dd('exportExcelThresholdPriceAdmin');
+
+      try{ 
+            // $ThresholdData = PriceCalculation::where('id',$ThresholdId)->first();
+ 
+              // return Excel::download(new ThresholdExport($contract_number), 'so.xlsx');
+              // $getThresholdData = DB::table('price_calculation')
+              //   ->leftjoin('products','price_calculation.pro_id','products.id')
+              //   ->leftjoin('categorys','price_calculation.cat_id','categorys.id')
+              //   ->leftjoin('sub_categorys','price_calculation.sub_cat_id','sub_categorys.id') 
+              //   ->select('price_calculation.id as threshold',
+              //       'price_calculation.size as size',
+              //       'price_calculation.BPT_Price as basic_price',
+              //       'price_calculation.Price_Premium as Price_Premium',
+              //       'price_calculation.Misc_Expense as Misc_Expense',
+              //       'price_calculation.Interest_Rate as Interest_Rate',
+              //       'price_calculation.CAM_Discount as CAM_Discount',
+              //       'price_calculation.status as status',
+              //       'products.id as product_id',
+              //       'products.pro_name as product_title',
+              //       'categorys.id as category_id',
+              //       'categorys.cat_name as category_name',
+              //       'sub_categorys.id as sub_category_id',
+              //       'sub_categorys.sub_cat_name as sub_category_name',
+              //       )
+              //   ->orderBy('price_calculation.id','DESC')
+              //   ->get();
+
+                $getThresholdData = DB::table('price_calculation')
+                ->leftjoin('products','price_calculation.pro_id','products.id')
+                ->leftjoin('categorys','price_calculation.cat_id','categorys.id')
+                ->leftjoin('sub_categorys','price_calculation.sub_cat_id','sub_categorys.id') 
+                ->select(
+                    'products.pro_name as product_title',
+                    'categorys.cat_name as category_name',
+                    'sub_categorys.sub_cat_name as sub_category_name',
+                    'price_calculation.size as size',
+                    'price_calculation.BPT_Price as basic_price',
+                    'price_calculation.Price_Premium as Price_Premium',
+                    'price_calculation.Misc_Expense as Misc_Expense',
+                    
+                    'price_calculation.id as threshold',
+                    'price_calculation.size as size',
+                    'price_calculation.BPT_Price as basic_price',
+                    'price_calculation.Price_Premium as Price_Premium',
+                    'price_calculation.Misc_Expense as Misc_Expense',
+                    'price_calculation.Interest_Rate as Interest_Rate',
+                    'price_calculation.CAM_Discount as CAM_Discount',
+                    'price_calculation.status as status',
+                    'products.id as product_id',
+                    'products.pro_name as product_title',
+                    'categorys.id as category_id',
+                    'categorys.cat_name as category_name',
+                    'sub_categorys.id as sub_category_id',
+                    'sub_categorys.sub_cat_name as sub_category_name',
+                    )
+                ->orderBy('price_calculation.id','DESC')
+                ->get();
+
+                dd($getThresholdData);
+            
+            if (!empty($getThresholdData)) {
+              return Excel::download(new ThresholdExport($getThresholdData), 'so.xlsx');
+               // return response()->json(['status'=>1,'message' =>'success.','result' => $getThresholdData],200);
+            }
+            else{
+
+               return response()->json(['status'=>1,'message' =>'No data found','result' => []],config('global.success_status'));
+
+            }
+            
+            
+            }catch(\Exception $e){
+                $response['error'] = $e->getMessage();
+                return response()->json([$response]);
+            }
     }
 
 

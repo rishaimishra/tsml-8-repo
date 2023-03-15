@@ -47,7 +47,7 @@ class AdminAuthController extends Controller
     */
    public function Adminlogin(Request $request)
    {
-       
+       // dd($request->all());
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
             'password'=> 'required'
